@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "npm: build",  // This is the label we'll use in the launch configuration
+        "type": "shell",
+        "command": "/Users/diegolamarao/.nvm/versions/node/v20.12.2/bin/npm",
+        "args": ["run", "build"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$tsc"]
+      }
+    ]
+  }
+  

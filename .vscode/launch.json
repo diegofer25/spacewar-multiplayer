@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Launch Program",
+        "program": "${workspaceFolder}/src/index.ts",
+        "preLaunchTask": "npm: build",  // This references the task label defined in tasks.json
+        "outFiles": ["${workspaceFolder}/build/**/*.js"],
+        "sourceMaps": true,
+        "cwd": "${workspaceFolder}",
+        "restart": true,
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen"
+      }
+    ]
+  }
+  
