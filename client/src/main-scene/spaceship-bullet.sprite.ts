@@ -34,7 +34,8 @@ export class SpaceshipBullet extends Phaser.Physics.Arcade.Sprite implements Gam
         const bulletY = y + Math.sin(rotation) * 30;
         this.setPosition(bulletX, bulletY);
         this.setRotation(rotation);
-        this.scene.physics.velocityFromRotation(rotation, 600, this.body?.velocity);
+        scene.physics.velocityFromRotation(rotation, 600, this.body?.velocity);
+        scene.sound.play('bullet-shot', { volume: 0.3 });
 
         const collider = this.scene.physics.add.overlap(this, this.scene.children.getChildren(), (_, spaceship) => {
             if (this.x < 0 || this.x > this.scene.physics.world.bounds.width || this.y < 0 || this.y > this.scene.physics.world.bounds.height) {
