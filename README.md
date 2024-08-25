@@ -1,29 +1,77 @@
-# Welcome to Colyseus!
+# Spacewar Multiplayer
 
-This project has been created using [⚔️ `create-colyseus-app`](https://github.com/colyseus/create-colyseus-app/) - an npm init template for kick starting a Colyseus project in TypeScript.
+A multiplayer space war game built using PhaserJS and ColyseusJS. This game allows multiple players to join a space battle, maneuver their ships, and shoot down opponents in real-time.
 
-[Documentation](http://docs.colyseus.io/)
+## Features
 
-## :crossed_swords: Usage
+- Real-time multiplayer battles
+- Player-controlled spaceships with movement and shooting mechanics
+- Server-side game logic using Colyseus
+- Client-side rendering with PhaserJS
 
-```
-npm start
-```
+## Getting Started
 
-## Structure
+### Prerequisites
 
-- `index.ts`: main entry point, register an empty room handler and attach [`@colyseus/monitor`](https://github.com/colyseus/colyseus-monitor)
-- `src/rooms/MyRoom.ts`: an empty room handler for you to implement your logic
-- `src/rooms/schema/MyRoomState.ts`: an empty schema used on your room's state.
-- `loadtest/example.ts`: scriptable client for the loadtest tool (see `npm run loadtest`)
-- `package.json`:
-    - `scripts`:
-        - `npm start`: runs `ts-node-dev index.ts`
-        - `npm test`: runs mocha test suite
-        - `npm run loadtest`: runs the [`@colyseus/loadtest`](https://github.com/colyseus/colyseus-loadtest/) tool for testing the connection, using the `loadtest/example.ts` script.
-- `tsconfig.json`: TypeScript configuration file
+- Node.js (v14.x or higher)
+- npm or yarn
 
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/diegofer25/spacewar-multiplayer.git
+   cd spacewar-multiplayer
+   ```
+
+2. Install dependencies for both the server and client:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the server:
+
+   ```bash
+   npm run start
+   ```
+
+4. Start the client:
+
+   ```bash
+   npm run start
+   ```
+
+### Usage
+
+- Open your browser and go to `http://localhost:2567` to play the game.
+
+## Development
+
+### Server
+
+The server is built with Node.js and Colyseus. It handles real-time communication between players and manages game state.
+
+- Entry point: `src/index.ts`
+- Room handlers: `src/rooms/`
+
+### Client
+
+The client is built with PhaserJS, rendering the game on the browser and handling user inputs.
+
+- Entry point: `client/src/main.ts`
+- Game scenes: `client/src/main-scene/main.scene.ts`
+
+### Contributing
+
+Feel free to submit issues, fork the repository, and create pull requests. We appreciate all contributions to improve the project.
 
 ## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+## Acknowledgments
+
+- [PhaserJS](https://phaser.io/)
+- [ColyseusJS](https://colyseus.io/)
