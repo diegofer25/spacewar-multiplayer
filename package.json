@@ -10,9 +10,7 @@
   "scripts": {
     "start": "node build/index.js",
     "dev": "tsx watch src/index.ts",
-    "build": "npm run build:client && npm run build:server",
-    "build:server": "rimraf build && tsc",
-    "build:client": "npm i --prefix client && npm run build --prefix client",
+    "build": "rimraf build && tsc",
     "loadtest": "tsx loadtest/example.ts --room game --numClients 100"
   },
   "author": "",
