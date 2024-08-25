@@ -38,8 +38,8 @@ export class MainScene extends Phaser.Scene {
     // const objects = this.children.getChildren();
     // console.log('scene objects', objects.length);
     if (!this._isConnecting && !this._gameRoom) {
-      let username = location.search.replace('?username=', '') ?? sessionStorage.getItem('username');
       const userId = sessionStorage.getItem('userId');
+      let username = location.search.replace('?username=', '') ?? sessionStorage.getItem(`username-${userId}`);
 
       if (!username) {
         username = prompt('Enter your username') ?? '';
@@ -50,6 +50,8 @@ export class MainScene extends Phaser.Scene {
         alert('Username must be between 3 and 15 characters');
         return;
       }
+
+      sessionStorage.setItem(`username-${userId}`, username);
 
       console.log('connecting to server');
       
