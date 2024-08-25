@@ -4,6 +4,9 @@
         "colyseus",
         "Colyseus",
         "loadtest",
-        "spritesheet"
+        "spacewar",
+        "spritesheet",
+        "tensorflow",
+        "tfjs"
     ]
 }
