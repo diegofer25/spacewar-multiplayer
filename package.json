@@ -12,7 +12,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "npm run build:client && npm run build:server",
     "build:server": "rimraf build && tsc",
-    "build:client": "npm run build --prefix client",
+    "build:client": "npm i --prefix client && npm run build --prefix client",
     "loadtest": "tsx loadtest/example.ts --room game --numClients 100"
   },
   "author": "",
