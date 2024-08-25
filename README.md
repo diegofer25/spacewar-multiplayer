@@ -34,13 +34,13 @@ A multiplayer space war game built using PhaserJS and ColyseusJS. This game allo
 3. Start the server:
 
    ```bash
-   npm run start
+   npm run dev
    ```
 
 4. Start the client:
 
    ```bash
-   npm run start
+   npm run dev
    ```
 
 ### Usage

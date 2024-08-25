@@ -5,14 +5,15 @@
   "description": "npm init template for bootstrapping an empty Colyseus project",
   "main": "build/index.js",
   "engines": {
-    "node": ">= 16.13.0"
+    "node": ">= 20.12.2"
   },
   "scripts": {
-    "start": "tsx watch src/index.ts",
-    "loadtest": "tsx loadtest/example.ts --room game --numClients 100",
-    "build": "npm run clean && tsx build src/index.ts",
-    "clean": "rimraf build",
-    "test": "mocha -r tsx test/**_test.ts --exit --timeout 15000"
+    "start": "node build/index.js",
+    "dev": "tsx watch src/index.ts",
+    "build": "npm run build:client && npm run build:server",
+    "build:server": "rimraf build && tsc",
+    "build:client": "npm run build --prefix client",
+    "loadtest": "tsx loadtest/example.ts --room game --numClients 100"
   },
   "author": "",
   "license": "MIT",

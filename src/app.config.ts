@@ -7,6 +7,9 @@ import basicAuth from "express-basic-auth";
  * Import your Room files
  */
 import { Game } from "./rooms/Game";
+import path from "path";
+
+const distPath = path.join(__dirname, "./../client/dist");
 
 export default config({
 
@@ -19,7 +22,7 @@ export default config({
 
     initializeExpress: (app) => {
         // add static files
-        app.use("/", express.static(__dirname + "./../client/dist"));
+        app.use("/", express.static(distPath));
 
         const basicAuthMiddleware = basicAuth({
             // list of users and passwords
@@ -34,7 +37,7 @@ export default config({
 
         // redirect every other route to index.html
         app.get("*", (req, res) => {
-            res.sendFile(__dirname + "./../client/dist/index.html");
+            res.sendFile(path.resolve(distPath, "index.html"));
         });
     },
 
