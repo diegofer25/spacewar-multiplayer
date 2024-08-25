@@ -39,7 +39,7 @@ export class MainScene extends Phaser.Scene {
     // console.log('scene objects', objects.length);
     if (!this._isConnecting && !this._gameRoom) {
       const userId = sessionStorage.getItem('userId');
-      let username = location.search.replace('?username=', '') ?? sessionStorage.getItem(`username-${userId}`);
+      let username = location.search.replace('?username=', '') || sessionStorage.getItem(`username-${userId}`);
 
       if (!username) {
         username = prompt('Enter your username') ?? '';
