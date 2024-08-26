@@ -39,11 +39,13 @@ function renderRanking(rankDiv: HTMLDivElement) {
     rankDiv.childNodes.forEach((child) => child.remove());
     const data = window.rankingList ?? [];
     const rankingElement = document.createElement('ol');
-    data.forEach((spaceship: any, index: number) => {
-      const li = document.createElement('li');
-      li.textContent = `${spaceship.username}: ${spaceship.score}`;
-      rankingElement.appendChild(li);
-    });
+    data
+      .sort((a: any, b: any) => b.score - a.score)
+      .forEach((spaceship: any, index: number) => {
+        const li = document.createElement('li');
+        li.textContent = `${spaceship.username}: ${spaceship.score ?? 0}`;
+        rankingElement.appendChild(li);
+      });
     rankDiv.appendChild(rankingElement);
 
     requestAnimationFrame(render);

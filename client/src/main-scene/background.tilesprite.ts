@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import background from '../assets/images/background.jpg';
+import background from '../assets/images/background.png';
 import { GameObjectLifeCycle } from './main.scene';
 
 export class Background extends Phaser.GameObjects.TileSprite implements GameObjectLifeCycle {
