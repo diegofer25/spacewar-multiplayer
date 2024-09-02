@@ -1,0 +1,32 @@
+{
+    "spaceship": {
+        "frameWidth": 114,
+        "frameHeight": 116,
+        "scale": 0.75,
+        "initialFireRate": 1000,
+        "initialMaxVelocity": 200,
+        "initialAngularVelocity": 75,
+        "fireRateWithPowerUp": 250,
+        "maxVelocityWithPowerUp": 400,
+        "angularVelocityWithPowerUp": 150,
+        "reviveSpawnTime": 1500
+    },
+    "powerUp": {
+        "frameWidth": 69.6,
+        "frameHeight": 69.6,
+        "types": {
+            "shield": 0,
+            "fire": 1,
+            "speed": 2
+        },
+        "creationDelay": 5000
+    },
+    "laser": {
+        "frameWidth": 17.75,
+        "frameHeight": 13.75,
+        "lifeTime": 1500
+    },
+    "global": {
+        "mapSize": 2000
+    }
+}

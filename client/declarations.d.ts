@@ -1,33 +1,34 @@
-declare module "*.png" {
+declare module '*.png' {
     const png: string;
     export default png;
-  }
+}
 
-  declare module "*.webp" {
+declare module '*.json' {
+    const json: string;
+    export default json;
+}
+
+declare module '*.webp' {
     const webp: string;
     export default webp;
-  }
+}
 
-  declare module "*.jpg" {
+declare module '*.jpg' {
     const jpg: string;
     export default jpg;
-  }
+}
 
-  declare module "*.jpeg" {
+declare module '*.jpeg' {
     const jpeg: string;
     export default jpeg;
-  }
-  
-  declare module "*.wav" {
+}
+
+declare module '*.wav' {
     const wav: string;
     export default wav;
-  }
+}
 
-  declare module "*.mp3" {
+declare module '*.mp3' {
     const mp3: string;
     export default mp3;
-  }
-
-interface Window {
-  rankingList: Array<{ username: string, score: number }>;
 }

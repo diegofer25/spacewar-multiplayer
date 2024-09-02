@@ -1,6 +1,6 @@
-import { GameObjectLifeCycle } from "./main.scene";
-import { SpaceshipSprite } from "./spaceship.sprite";
-import shootButtonImage from '../assets/images/shoot-button.png';
+import shootButtonImage from 'client/assets/images/shoot-button.png';
+import { GameObjectLifeCycle } from 'client/spacegame-scene/spacegame.scene';
+import { SpaceshipSprite } from 'client/spacegame-scene/spaceship/spaceship.sprite';
 
 export class ShootButtonImage extends Phaser.GameObjects.Image implements GameObjectLifeCycle {
     private _isShooting = false;
@@ -14,13 +14,14 @@ export class ShootButtonImage extends Phaser.GameObjects.Image implements GameOb
     }
 
     constructor(scene: Phaser.Scene) {
-        super(scene, scene.scale.width * 0.1, scene.scale.height - (scene.scale.height * 0.01), 'shoot-button');
+        super(
+            scene,
+            scene.scale.width * 0.1,
+            scene.scale.height - scene.scale.height * 0.01,
+            'shoot-button',
+        );
         scene.add.existing(this);
-        this
-            .setInteractive()
-            .setScrollFactor(0)
-            .setScale(0.90)
-            .setZ(1);
+        this.setInteractive().setScrollFactor(0).setScale(0.9).setZ(1);
 
         // Ensure the button is scaled appropriately and placed in the correct position
         this.setOrigin(0.5, 0.5);
@@ -51,10 +52,12 @@ export class ShootButtonImage extends Phaser.GameObjects.Image implements GameOb
     }
 
     shoot() {
-        const player = this.scene.children.getChildren().find((child) => child instanceof SpaceshipSprite && child.isPlayer) as SpaceshipSprite;
-            
+        const player = this.scene.children
+            .getChildren()
+            .find(child => child instanceof SpaceshipSprite && child.isPlayer) as SpaceshipSprite;
+
         if (player) {
-            player.fireBullet();
+            // send to the server that the player is shooting
         }
     }
 }

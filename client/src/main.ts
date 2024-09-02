@@ -1,57 +1,58 @@
 import Phaser from 'phaser';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
-import { MainScene } from './main-scene/main.scene';
+import Stats from 'stats.js';
 
-if (!sessionStorage.getItem('userId')) {
-  sessionStorage.setItem('userId', crypto.randomUUID());
-}
+import { SpaceGameScene } from 'client/spacegame-scene/spacegame.scene';
 
 const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.AUTO,
-  plugins: {
-    global: [{
-      key: 'rexVirtualJoystick',
-      plugin: VirtualJoystickPlugin,
-      start: true
-    }]
-  },
-  scale: {
-      mode: Phaser.Scale.FIT,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
-      parent: 'game',
-      width: window.innerWidth,
-      height: window.innerHeight,
-  },
-  scene: [MainScene],
-  physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 0, x: 0 },
-      debug: location.search.includes('debug'),
-    }
-  }
+    type: Phaser.AUTO,
+    plugins: {
+        global: [
+            {
+                key: 'rexVirtualJoystick',
+                plugin: VirtualJoystickPlugin,
+                start: true,
+            },
+        ],
+    },
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        parent: 'game',
+        width: window.innerWidth,
+        height: window.innerHeight,
+    },
+    scene: [SpaceGameScene],
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0, x: 0 },
+            debug: !!location.search.includes('debug'),
+        },
+    },
+    dom: {
+        createContainer: true,
+        behindCanvas: false,
+    },
+    version: '1.0.0',
 };
 
-export const game = new Phaser.Game(config);
+new Phaser.Game(config);
 
-function renderRanking(rankDiv: HTMLDivElement) {
-  function render () {
-    rankDiv.childNodes.forEach((child) => child.remove());
-    const data = window.rankingList ?? [];
-    const rankingElement = document.createElement('ol');
-    data
-      .sort((a: any, b: any) => b.score - a.score)
-      .forEach((spaceship: any, index: number) => {
-        const li = document.createElement('li');
-        li.textContent = `${spaceship.username}: ${spaceship.score ?? 0}`;
-        rankingElement.appendChild(li);
-      });
-    rankDiv.appendChild(rankingElement);
-
-    requestAnimationFrame(render);
-  }
-
-  render();
+if (location.search.includes('stats')) {
+    showStatsMonitor();
 }
 
-renderRanking(document.getElementById('ranking') as HTMLDivElement);
+function showStatsMonitor() {
+    const stats = new Stats();
+    stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild(stats.dom);
+
+    function animate() {
+        stats.begin();
+        stats.end();
+        requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+}
