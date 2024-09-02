@@ -15,7 +15,7 @@
         "lint": "eslint 'src/**/*.{js,ts}' --fix",
         "format": "prettier --write 'src/**/*.{js,ts,json,css,md}'"
     },
-    "author": "",
+    "author": "Diego Lamarão - diego.lamarao92@gmail.com",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/colyseus/create-colyseus/issues"
