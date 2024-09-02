@@ -8,9 +8,9 @@
         "node": ">= 20.12.2"
     },
     "scripts": {
-        "start": "node build/index.js",
-        "dev": "tsx watch src/index.ts",
-        "build": "rimraf build && tsc",
+        "start": "node build/src/index.js",
+        "dev": "tsx watch",
+        "build": "rimraf build && tsc src/index.ts",
         "loadtest": "tsx loadtest/example.ts --room game --numClients 4",
         "lint": "eslint 'src/**/*.{js,ts}' --fix",
         "format": "prettier --write 'src/**/*.{js,ts,json,css,md}'"
