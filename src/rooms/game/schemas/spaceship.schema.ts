@@ -17,7 +17,7 @@ export class Spaceship extends Schema implements ISpaceship {
     @type('number') angularVelocity = configs.spaceship.initialAngularVelocity;
     @type('number') x: number;
     @type('number') y: number;
-    @type('number') powerUp: number;
+    @type('number') powerUp = -1;
     @type('string') sessionId: string;
     @type('string') username: string;
     @type('number') nextFireTimestamp = 0;

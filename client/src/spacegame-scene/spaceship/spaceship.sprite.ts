@@ -27,7 +27,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     private _score = 0;
     private _maxVelocity = 200;
     private _angularVelocity = 75;
-    private _currentPowerUp?: number;
+    private _currentPowerUp = -1;
 
     static preload(scene: Phaser.Scene) {
         SpaceshipLaser.preload(scene);
@@ -188,7 +188,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         if (spaceship.powerUp !== this._currentPowerUp) {
             this._currentPowerUp = spaceship.powerUp;
             if (this._currentPowerUp) {
-                this.consumePowerUp(this._currentPowerUp);
+                this.consumePowerUp(spaceship.powerUp);
             } else {
                 this.removePowerUpEffect();
             }
