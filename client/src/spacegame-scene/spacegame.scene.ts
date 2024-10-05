@@ -17,7 +17,8 @@ export class SpaceGameScene extends Phaser.Scene {
     private _ranking?: RankingDomElement;
     private _isMobile = window.innerWidth < 800;
     private _zoom = this._isMobile ? 0.75 : 1;
-    private _serverTime = 0;
+    private _lastMessageSentTimestamp = Date.now();
+    private _latency = 0;
 
     preload() {
         Background.preload(this);
@@ -35,8 +36,12 @@ export class SpaceGameScene extends Phaser.Scene {
         ) as SpaceshipSprite[];
     }
 
-    get serverTime() {
-        return this._serverTime;
+    get latency() {
+        return this._latency;
+    }
+
+    set lastMessageSentTimestamp(value: number) {
+        this._lastMessageSentTimestamp = value;
     }
 
     async create() {
@@ -62,9 +67,10 @@ export class SpaceGameScene extends Phaser.Scene {
         await GameRoom.join(options);
 
         GameRoom.listenStateUpdate(state => {
-            this._serverTime = state.serverTimestamp;
+            this._latency = Date.now() - this._lastMessageSentTimestamp;
             this.processSpaceshipStateUpdate(state.spaceships, options.userId);
-            this.renderRank(state.spaceships, Date.now() - state.serverTimestamp);
+
+            this.renderRank(state.spaceships, this.latency);
         });
 
         GameRoom.listenAddSpaceship((spaceship, userId) => {

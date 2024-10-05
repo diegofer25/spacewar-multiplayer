@@ -77,8 +77,6 @@ export class Game extends Room<GameState> {
     }
 
     private update(_dt: number) {
-        this.state.serverTimestamp = Date.now();
-
         this.handlePowerUps();
         this.checkStateAndUpdate();
     }
@@ -120,13 +118,13 @@ export class Game extends Room<GameState> {
 
     private handlePowerUps() {
         // add new power up every 30s
-        if (this._powerUpCreationDelay <= this.state.serverTimestamp) {
-            this._powerUpCreationDelay = this.state.serverTimestamp + configs.powerUp.creationDelay;
+        if (this._powerUpCreationDelay <= Date.now()) {
+            this._powerUpCreationDelay = Date.now() + configs.powerUp.creationDelay;
             const powerUp = new PowerUp();
             powerUp.x = Math.random() * configs.global.mapSize;
             powerUp.y = Math.random() * configs.global.mapSize;
             powerUp.type = Math.floor(Math.random() * 3);
-            powerUp.lifeTime = this.state.serverTimestamp + 15000; // 15 seconds
+            powerUp.lifeTime = Date.now() + 15000; // 15 seconds
             this.state.powerUps.set(crypto.randomUUID(), powerUp);
         }
     }
@@ -134,10 +132,7 @@ export class Game extends Room<GameState> {
     private checkStateAndUpdate() {
         this.state.spaceships.forEach((spaceship, userId) => {
             if (spaceship.isExploding) {
-                if (
-                    spaceship.reviveTimestamp &&
-                    spaceship.reviveTimestamp <= this.state.serverTimestamp
-                ) {
+                if (spaceship.reviveTimestamp && spaceship.reviveTimestamp <= Date.now()) {
                     spaceship.isExploding = false;
                     spaceship.x = Math.random() * configs.global.mapSize;
                     spaceship.y = Math.random() * configs.global.mapSize;
@@ -150,18 +145,15 @@ export class Game extends Room<GameState> {
                 }
             }
 
-            if (
-                spaceship.powerUp >= 0 &&
-                spaceship.powerUpExpiryTimestamp <= this.state.serverTimestamp
-            ) {
+            if (spaceship.powerUp >= 0 && spaceship.powerUpExpiryTimestamp <= Date.now()) {
                 spaceship.powerUp = -1;
                 spaceship.fireRate = configs.spaceship.initialFireRate;
                 spaceship.maxVelocity = configs.spaceship.initialMaxVelocity;
                 spaceship.angularVelocity = configs.spaceship.initialAngularVelocity;
             }
 
-            if (spaceship.isShooting && spaceship.nextFireTimestamp <= this.state.serverTimestamp) {
-                spaceship.nextFireTimestamp = this.state.serverTimestamp + spaceship.fireRate;
+            if (spaceship.isShooting && spaceship.nextFireTimestamp <= Date.now()) {
+                spaceship.nextFireTimestamp = Date.now() + spaceship.fireRate;
                 const laser = new SpaceshipLaser(
                     spaceship.x,
                     spaceship.y,
@@ -170,7 +162,7 @@ export class Game extends Room<GameState> {
                 );
                 laser.x = spaceship.x;
                 laser.y = spaceship.y;
-                laser.lifeTime = this.state.serverTimestamp + configs.laser.lifeTime;
+                laser.lifeTime = Date.now() + configs.laser.lifeTime;
                 this.state.lasers.set(uuidV4(), laser);
             }
 
@@ -194,18 +186,18 @@ export class Game extends Room<GameState> {
             });
 
             this.state.powerUps.forEach((powerUp, key) => {
-                if (powerUp.lifeTime < this.state.serverTimestamp) {
+                if (powerUp.lifeTime < Date.now()) {
                     this.state.powerUps.delete(key);
                 } else if (
                     this.spaceshipCollectedPowerUp(spaceship, powerUp) &&
                     spaceship.powerUp < 0
                 ) {
                     spaceship.powerUp = powerUp.type;
-                    spaceship.powerUpExpiryTimestamp = this.state.serverTimestamp + 15000;
+                    spaceship.powerUpExpiryTimestamp = Date.now() + 15000;
                     this.state.powerUps.delete(key);
 
                     if (spaceship.powerUp === configs.powerUp.types.fire) {
-                        spaceship.nextFireTimestamp = this.state.serverTimestamp;
+                        spaceship.nextFireTimestamp = Date.now();
                         spaceship.fireRate = configs.spaceship.fireRateWithPowerUp;
                     } else if (spaceship.powerUp === configs.powerUp.types.speed) {
                         spaceship.maxVelocity = configs.spaceship.maxVelocityWithPowerUp;
@@ -214,7 +206,7 @@ export class Game extends Room<GameState> {
                 }
             });
             this.state.lasers.forEach((laser, key) => {
-                if (laser.lifeTime <= this.state.serverTimestamp) {
+                if (laser.lifeTime <= Date.now()) {
                     this.state.lasers.delete(key);
                     return;
                 }
@@ -237,7 +229,7 @@ export class Game extends Room<GameState> {
 
     private processDestroySpaceship(spaceship: ISpaceship, enemySpaceship: ISpaceship) {
         spaceship.isExploding = true;
-        spaceship.reviveTimestamp = this.state.serverTimestamp + configs.spaceship.reviveSpawnTime;
+        spaceship.reviveTimestamp = Date.now() + configs.spaceship.reviveSpawnTime;
         spaceship.score -= 1;
         spaceship.powerUp = -1;
         spaceship.fireRate = configs.spaceship.initialFireRate;
