@@ -229,7 +229,7 @@ export class Game extends Room<GameState> {
 
                 const enemySpaceship = this.state.spaceships.get(laser.spaceshipName);
 
-                this.processDestroySpaceship(enemySpaceship, spaceship);
+                this.processDestroySpaceship(spaceship, enemySpaceship);
                 this.state.lasers.delete(key);
             });
         });
