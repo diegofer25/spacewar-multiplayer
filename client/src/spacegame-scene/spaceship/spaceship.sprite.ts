@@ -187,7 +187,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         }
         if (spaceship.powerUp !== this._currentPowerUp) {
             this._currentPowerUp = spaceship.powerUp;
-            if (this._currentPowerUp) {
+            if (this._currentPowerUp >= 0) {
                 this.consumePowerUp(spaceship.powerUp);
             } else {
                 this.removePowerUpEffect();
