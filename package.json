@@ -9,7 +9,7 @@
     },
     "scripts": {
         "start": "node build/src/index.js",
-        "dev": "tsx watch",
+        "dev-server": "tsx src/index.ts --watch --onSuccess 'tsc -p tsconfig.json'",
         "build": "rimraf build && tsc",
         "loadtest": "tsx loadtest/example.ts --room game --numClients 4",
         "lint": "eslint 'src/**/*.{js,ts}' --fix",
