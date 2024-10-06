@@ -216,7 +216,9 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     public accelerate() {
         this.scene.physics.velocityFromRotation(
             this.rotation,
-            200,
+            this._currentPowerUp === configs.powerUp.types.speed
+                ? this._maxVelocity
+                : this._maxVelocity,
             this.spaceshipBody.acceleration,
         );
         if (!this._turbineSound.isPlaying && this._isPlayer) {

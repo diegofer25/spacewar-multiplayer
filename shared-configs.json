@@ -5,10 +5,10 @@
         "scale": 0.75,
         "initialFireRate": 1000,
         "initialMaxVelocity": 200,
-        "initialAngularVelocity": 75,
+        "initialAngularVelocity": 150,
         "fireRateWithPowerUp": 250,
         "maxVelocityWithPowerUp": 400,
-        "angularVelocityWithPowerUp": 150,
+        "angularVelocityWithPowerUp": 300,
         "reviveSpawnTime": 1500
     },
     "powerUp": {

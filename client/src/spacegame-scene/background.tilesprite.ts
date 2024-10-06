@@ -28,32 +28,48 @@ export class Background extends Phaser.GameObjects.TileSprite implements GameObj
 
         // Define the grid size and line color
         const gridSize = configs.global.mapSize / 25; // Size of each grid cell
-        const lineColor = 0x00ff00; // Green color for the grid lines
+        let lineColor = Phaser.Display.Color.RandomRGB().color; // Green color for the grid lines
 
-        scene.add.grid(
+        const grids = scene.add.grid(
             configs.global.mapSize / 2,
             configs.global.mapSize / 2,
             configs.global.mapSize,
             configs.global.mapSize,
             gridSize,
             gridSize,
+            undefined,
+            undefined,
             lineColor,
-            0,
-            lineColor,
-            0.2,
+            1,
         );
 
         // Draw the rectangle around the world bounds
-        scene.add
+        const graphic = scene.add
             .graphics()
-            .lineStyle(1, lineColor, 0.4)
+            .lineStyle(5, lineColor, 1)
             .strokeRect(0, 0, configs.global.mapSize, configs.global.mapSize);
 
+        // animate grid with tween to blink and changing to a random color
+        scene.tweens.add({
+            targets: [graphic, grids],
+            alpha: 0.2,
+            duration: 1000,
+            yoyo: true,
+            repeat: -1,
+            onRepeat: () => {
+                lineColor = Phaser.Display.Color.RandomRGB().color;
+                grids.setOutlineStyle(lineColor, 1);
+                graphic
+                    .lineStyle(5, lineColor, 1)
+                    .strokeRect(0, 0, configs.global.mapSize, configs.global.mapSize);
+            },
+        });
+
         // Add the background music in infinite loop
-        scene.sound.add('bg-music', { loop: true }).play();
+        scene.sound.add('bg-music', { loop: true, volume: 0.5 }).play();
 
         // create lights that will randomly change color and walk around the map
-        this.lights = Array.from({ length: 200 }, () =>
+        this.lights = Array.from({ length: 50 }, () =>
             scene.lights
                 .addLight(
                     Phaser.Math.Between(
@@ -64,7 +80,7 @@ export class Background extends Phaser.GameObjects.TileSprite implements GameObj
                         -configs.global.mapSize * 0.2,
                         configs.global.mapSize * 1.2,
                     ),
-                    800,
+                    1000,
                 )
                 .setIntensity(15),
         );
