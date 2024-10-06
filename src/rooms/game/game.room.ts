@@ -17,9 +17,10 @@ export class Game extends Room<GameState> {
 
         this.setState(new GameState());
 
-        this.onMessage('spaceship-state-update', this.onSpaceshipStateUpdate.bind(this));
-
-        this.onMessage('lasers-state-update', this.onLaserStateUpdate.bind(this));
+        this.onMessage('state-update', (client: Client, data: StateUpdateEvent) => {
+            this.onSpaceshipStateUpdate(client, data.spaceship);
+            this.onLaserStateUpdate(client, data.lasers);
+        });
 
         this.setSimulationInterval(dt => this.update(dt));
     }
@@ -331,4 +332,9 @@ export interface LaserUpdate {
     x: number;
     y: number;
     key: string;
+}
+
+export interface StateUpdateEvent {
+    spaceship: SpaceshipStateToUpdate;
+    lasers: LaserUpdate[];
 }

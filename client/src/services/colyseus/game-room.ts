@@ -1,4 +1,9 @@
-import { GameRoomOptions, LaserUpdate, SpaceshipStateToUpdate } from 'server/rooms/game/game.room';
+import {
+    GameRoomOptions,
+    LaserUpdate,
+    SpaceshipStateToUpdate,
+    StateUpdateEvent,
+} from 'server/rooms/game/game.room';
 import { GameState } from 'server/rooms/game/schemas/game-state.schema';
 
 import { getRoomsManager } from 'client/services/colyseus/rooms-manager';
@@ -7,12 +12,19 @@ import { PowerUp } from 'server/rooms/game/schemas/power-up.schema';
 import { SpaceshipLaser } from 'server/rooms/game/schemas/spaceship-laser';
 
 export class GameRoom {
+    static lastMessageSentTimestamp = Date.now();
+    static latency = 0;
+    static shouldSendUpdate = true;
+
     static async join(options: GameRoomOptions) {
         return getRoomsManager().joinRoom('game', options);
     }
 
     static listenStateUpdate(callback: (state: GameState) => void) {
-        getRoomsManager().onRoomStateChange<GameState>('game', callback);
+        getRoomsManager().onRoomStateChange<GameState>('game', state => {
+            this.latency = Date.now() - this.lastMessageSentTimestamp;
+            callback(state);
+        });
     }
 
     static listenAddSpaceship(callback: (item: Spaceship, key: string) => void) {
@@ -39,11 +51,8 @@ export class GameRoom {
         getRoomsManager().getRoom<GameState>('game').state.lasers.onRemove(callback);
     }
 
-    static sendSpaceshipStateUpdate(payload: SpaceshipStateToUpdate) {
-        getRoomsManager().sendMessage('game', 'spaceship-state-update', payload);
-    }
-
-    static sendLasersStateUpdate(payload: LaserUpdate[]) {
-        getRoomsManager().sendMessage('game', 'lasers-state-update', payload);
+    static sendStateUpdate(payload: StateUpdateEvent) {
+        this.lastMessageSentTimestamp = Date.now();
+        getRoomsManager().sendMessage('game', 'state-update', payload);
     }
 }

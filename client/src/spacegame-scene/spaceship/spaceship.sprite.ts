@@ -119,9 +119,6 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
                 rotation: this.rotation,
             };
 
-            GameRoom.sendSpaceshipStateUpdate(stateToUpdate);
-            this._scene.lastMessageSentTimestamp = Date.now();
-
             const lasersUpdate = Array.from(this._laserGun.lasers.entries()).map(
                 ([key, laser]) => ({
                     key,
@@ -130,7 +127,10 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
                 }),
             );
 
-            GameRoom.sendLasersStateUpdate(lasersUpdate);
+            GameRoom.sendStateUpdate({
+                spaceship: stateToUpdate,
+                lasers: lasersUpdate,
+            });
         }
 
         if (this._isExploding) {
@@ -191,7 +191,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
                 this.removePowerUpEffect();
             }
         }
-        if (this._scene.latency > 100) {
+        if (GameRoom.latency > 100) {
             this.setPosition(spaceship.x, spaceship.y);
             this.setRotation(spaceship.rotation);
         } else if (Math.abs(this.x - spaceship.x) > 50 || Math.abs(this.y - spaceship.y) > 50) {
