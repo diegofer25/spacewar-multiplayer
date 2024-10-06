@@ -21,7 +21,9 @@ export class SpaceshipLaserGun {
 
     public fire(id: string, x: number, y: number, rotation: number) {
         this._lasers.set(id, new SpaceshipLaser(this.scene, x, y, rotation, this.spaceship.name));
-        this.scene.cameras.main.shake(100, 0.01);
+        if (this.spaceship.isPlayer) {
+            this.scene.cameras.main.shake(100, 0.01);
+        }
     }
 
     public removeLaser(id: string) {
