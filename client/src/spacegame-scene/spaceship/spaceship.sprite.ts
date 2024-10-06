@@ -191,13 +191,12 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
                 this.removePowerUpEffect();
             }
         }
-        if (GameRoom.latency > 100) {
-            this.setPosition(spaceship.x, spaceship.y);
-            this.setRotation(spaceship.rotation);
-        } else if (Math.abs(this.x - spaceship.x) > 50 || Math.abs(this.y - spaceship.y) > 50) {
-            this.setPosition(spaceship.x, spaceship.y);
-        } else if (Math.abs(this.rotation - spaceship.rotation) > 0.1) {
-            this.setRotation(spaceship.rotation);
+        if (GameRoom.latency > 128) {
+            if (Math.abs(this.x - spaceship.x) > 50 || Math.abs(this.y - spaceship.y) > 50) {
+                this.setPosition(spaceship.x, spaceship.y);
+            } else if (Math.abs(this.rotation - spaceship.rotation) > 0.2) {
+                this.setRotation(spaceship.rotation);
+            }
         }
     }
 
