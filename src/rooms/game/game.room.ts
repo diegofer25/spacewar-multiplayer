@@ -145,7 +145,7 @@ export class Game extends Room<GameState> {
                 }
             }
 
-            if (spaceship.powerUp >= 0 && spaceship.powerUpExpiryTimestamp <= Date.now()) {
+            if (Date.now() > spaceship.powerUpExpiryTimestamp && spaceship.powerUp >= 0) {
                 spaceship.powerUp = -1;
                 spaceship.fireRate = configs.spaceship.initialFireRate;
                 spaceship.maxVelocity = configs.spaceship.initialMaxVelocity;

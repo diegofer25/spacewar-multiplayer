@@ -25,10 +25,10 @@ export class SpaceshipParticles {
             };
         this._particles.turbine = scene.add.particles(0, 0, 'flares-particles', {
             frame: 'white',
-            lifespan: 100,
-            speed: 10,
-            frequency: 20,
-            scale: { start: 0.2, end: 0 },
+            lifespan: 500,
+            speed: 20,
+            frequency: 5,
+            scale: { start: 0.3, end: 0 },
             ...commonParticlesOptions,
         });
         const powerUpsParticlesOptions: Partial<Phaser.Types.GameObjects.Particles.ParticleEmitterConfig> =
@@ -66,13 +66,14 @@ export class SpaceshipParticles {
             {
                 frame: 'green',
                 ...powerUpsParticlesOptions,
+                lifespan: 1000,
             },
         );
         this._particles.explode = scene.add.particles(undefined, undefined, 'flares-particles', {
             frame: ['red', 'yellow', 'white'],
-            lifespan: 800,
-            speed: { min: 150, max: 250 },
-            scale: { start: 0.4, end: 0 },
+            lifespan: 2000,
+            speed: { min: 450, max: 1000 },
+            scale: { start: 1, end: 0 },
             blendMode: Phaser.BlendModes.ADD,
             emitting: false,
         });
@@ -95,7 +96,7 @@ export class SpaceshipParticles {
 
     public resetAndExplode() {
         this.reset();
-        this._particles.explode?.start().explode(100, this.spaceship.x, this.spaceship.y);
+        this._particles.explode?.start().explode(1000, this.spaceship.x, this.spaceship.y);
     }
 
     public resetAndStartTurbine() {

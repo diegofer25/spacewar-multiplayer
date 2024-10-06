@@ -19,7 +19,6 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     private _spaceshipControls?: SpaceshipControls;
     private _spaceshipParticles: SpaceshipParticles;
     private _laserGun: SpaceshipLaserGun;
-    private _spotlight: Phaser.GameObjects.Light;
     private _turbineSound: Phaser.Sound.BaseSound;
     private _isPlayer = false;
     private _isExploding = false;
@@ -79,7 +78,6 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         }
 
         this._spaceshipParticles = new SpaceshipParticles(_scene, this);
-        this._spotlight = _scene.lights.addLight(400, 300, 280).setIntensity(3);
         this._laserGun = new SpaceshipLaserGun(_scene, this);
     }
 
@@ -157,8 +155,6 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         } else {
             this._usernameText.setPosition(this.x, this.y - 40);
         }
-
-        this._spotlight?.setPosition(this.x, this.y);
     }
 
     public updateState(spaceship: ISpaceship) {
@@ -289,6 +285,9 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         this._isExploding = true;
         this._score--;
         this._currentPowerUp = -1;
+        if (this.isPlayer) {
+            this.scene.cameras.main.shake(configs.spaceship.reviveSpawnTime, 0.1);
+        }
         this._turbineSound.stop();
         this._spaceshipParticles.resetAndExplode();
         this.scene.sound.play('explosion', { volume: 0.1 });

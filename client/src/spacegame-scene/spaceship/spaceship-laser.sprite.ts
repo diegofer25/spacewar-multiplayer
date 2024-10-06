@@ -48,7 +48,7 @@ export class SpaceshipLaser extends Phaser.Physics.Arcade.Sprite {
         const laserY = y + Math.sin(rotation) * 30;
         this.setPosition(laserX, laserY);
         this.setRotation(rotation);
-        scene.physics.velocityFromRotation(rotation, 600, this.body?.velocity);
+        scene.physics.velocityFromRotation(rotation, 1200, this.body?.velocity);
         scene.sound.play('laser-shot', { volume: 0.1 });
 
         // destroy laser after some time
@@ -61,7 +61,7 @@ export class SpaceshipLaser extends Phaser.Physics.Arcade.Sprite {
                 speed: 150,
                 quantity: 2,
                 frequency: 20,
-                lifespan: 100,
+                lifespan: 1000,
                 // adjust the angle to match the laser rotation
                 angle: { min: (rotation * 180) / Math.PI - 5, max: (rotation * 180) / Math.PI + 5 },
             })
