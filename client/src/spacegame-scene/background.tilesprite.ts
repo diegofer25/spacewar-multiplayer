@@ -64,9 +64,9 @@ export class Background extends Phaser.GameObjects.TileSprite implements GameObj
                         -configs.global.mapSize * 0.2,
                         configs.global.mapSize * 1.2,
                     ),
-                    500,
+                    800,
                 )
-                .setIntensity(10),
+                .setIntensity(15),
         );
     }
 
@@ -74,13 +74,14 @@ export class Background extends Phaser.GameObjects.TileSprite implements GameObj
         this.lights.forEach(light => {
             const maxEdge = configs.global.mapSize * 1.2;
             const minEdge = -configs.global.mapSize * 0.2;
-            const randomX = light.x + Phaser.Math.Between(-0.01, 0.01);
-            const randomY = light.y + Phaser.Math.Between(-0.01, 0.01);
+            const randomX = light.x + Phaser.Math.Between(-10, 10);
+            const randomY = light.y + Phaser.Math.Between(-10, 10);
             light.setPosition(
                 Phaser.Math.Clamp(randomX, minEdge, maxEdge),
                 Phaser.Math.Clamp(randomY, minEdge, maxEdge),
             );
             light.setColor(Phaser.Display.Color.RandomRGB().color);
+            light.setRadius(Math.random() * 800);
         });
     }
 }

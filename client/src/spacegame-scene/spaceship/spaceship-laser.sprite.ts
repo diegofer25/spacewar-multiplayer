@@ -58,7 +58,7 @@ export class SpaceshipLaser extends Phaser.Physics.Arcade.Sprite {
             .particles(0, 0, 'flares-particles', {
                 blendMode: Phaser.BlendModes.ADD,
                 scale: { start: 0.15, end: 0.1 },
-                speed: 150,
+                speed: 250,
                 quantity: 2,
                 frequency: 20,
                 lifespan: 1000,
