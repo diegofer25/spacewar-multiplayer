@@ -298,6 +298,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         this.scene.time.delayedCall(configs.spaceship.reviveSpawnTime, () => {
             if (definitive) {
                 this.destroy();
+                this._usernameText?.destroy();
             } else {
                 if (this.isPlayer) {
                     this.scene.cameras.main.fadeIn(500, 0, 0, 0);

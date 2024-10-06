@@ -1,9 +1,4 @@
-import {
-    GameRoomOptions,
-    LaserUpdate,
-    SpaceshipStateToUpdate,
-    StateUpdateEvent,
-} from 'server/rooms/game/game.room';
+import { StartGameOptions, StateUpdateEvent } from 'server/rooms/game/game.room';
 import { GameState } from 'server/rooms/game/schemas/game-state.schema';
 
 import { getRoomsManager } from 'client/services/colyseus/rooms-manager';
@@ -16,7 +11,7 @@ export class GameRoom {
     static latency = 0;
     static shouldSendUpdate = true;
 
-    static async join(options: GameRoomOptions) {
+    static async join(options: StartGameOptions) {
         return getRoomsManager().joinRoom('game', options);
     }
 
@@ -54,5 +49,10 @@ export class GameRoom {
     static sendStateUpdate(payload: StateUpdateEvent) {
         this.lastMessageSentTimestamp = Date.now();
         getRoomsManager().sendMessage('game', 'state-update', payload);
+    }
+
+    static sendStartGame(options: StartGameOptions) {
+        this.lastMessageSentTimestamp = Date.now();
+        getRoomsManager().sendMessage('game', 'start-game', options);
     }
 }

@@ -12,9 +12,7 @@ export class Game extends Room<GameState> {
     maxClients = 1000;
     private _powerUpCreationDelay = 0;
 
-    onCreate(options: GameRoomOptions) {
-        console.log('Game room created!', options);
-
+    onCreate() {
         this.setState(new GameState());
 
         this.onMessage('state-update', (client: Client, data: StateUpdateEvent) => {
@@ -22,19 +20,29 @@ export class Game extends Room<GameState> {
             this.onLaserStateUpdate(client, data.lasers);
         });
 
-        this.setSimulationInterval(dt => this.update(dt));
+        this.onMessage('start-game', (client: Client, options: StartGameOptions) => {
+            const userId = options.userId as string;
+            const spaceship = this.state.spaceships.get(userId);
+
+            if (!spaceship) {
+                const username = options.username || `Guest-${client.sessionId}`;
+                this.state.spaceships.set(
+                    options.userId,
+                    new Spaceship(client.sessionId, username),
+                );
+            }
+        });
+
+        this.setSimulationInterval(dt => this.runUpdates(dt));
     }
 
-    onJoin(client: Client, options: GameRoomOptions) {
+    onJoin(client: Client, options: StartGameOptions) {
         console.log(client.sessionId, 'joined!', options);
 
         const userId = options.userId as string;
         const spaceship = this.state.spaceships.get(userId);
 
-        if (!spaceship) {
-            const username = options.username || `Guest-${client.sessionId}`;
-            this.state.spaceships.set(options.userId, new Spaceship(client.sessionId, username));
-        } else {
+        if (spaceship) {
             spaceship.sessionId = client.sessionId;
             spaceship.connected = true;
         }
@@ -77,7 +85,7 @@ export class Game extends Room<GameState> {
         this.state.spaceships.clear();
     }
 
-    private update(_dt: number) {
+    private runUpdates(_dt: number) {
         this.handlePowerUps();
         this.checkStateAndUpdate();
     }
@@ -310,7 +318,7 @@ interface Rectangle extends Vector {
     height: number;
 }
 
-export interface GameRoomOptions {
+export interface StartGameOptions {
     userId: string;
     username: string;
 }
