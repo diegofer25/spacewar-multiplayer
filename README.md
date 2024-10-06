@@ -35,7 +35,7 @@
 3. Start the server:
 
     ```bash
-    npm run dev
+    npm run dev-server
     ```
 
 4. Start the client:
