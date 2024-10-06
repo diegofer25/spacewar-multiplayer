@@ -66,7 +66,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         // Set player physics properties
         this.setDamping(true);
         this.setDrag(0.99);
-        this.setMaxVelocity(this._maxVelocity);
+        this.setMaxVelocity(this._maxVelocity, this._maxVelocity);
         this.setScale(configs.spaceship.scale);
 
         if (isPlayer) {
@@ -177,7 +177,8 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
             this.decelerate();
         }
         if (spaceship.maxVelocity !== this._maxVelocity) {
-            this.setMaxVelocity(spaceship.maxVelocity);
+            this._maxVelocity = spaceship.maxVelocity;
+            this.setMaxVelocity(spaceship.maxVelocity, spaceship.maxVelocity);
         }
         if (spaceship.angularVelocity !== this._angularVelocity) {
             this._angularVelocity = spaceship.angularVelocity;
