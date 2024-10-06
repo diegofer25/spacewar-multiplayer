@@ -24,6 +24,7 @@ export class SpaceshipParticles {
                 emitCallback: this.onEmitParticle.bind(this),
             };
         this._particles.turbine = scene.add.particles(0, 0, 'flares-particles', {
+            name: 'turbine',
             frame: 'white',
             lifespan: 500,
             speed: 20,
@@ -45,6 +46,7 @@ export class SpaceshipParticles {
             0,
             'flares-particles',
             {
+                name: 'shield',
                 frame: 'blue',
                 ...powerUpsParticlesOptions,
             },
@@ -54,6 +56,7 @@ export class SpaceshipParticles {
             0,
             'flares-particles',
             {
+                name: 'fire',
                 frame: 'red',
                 ...powerUpsParticlesOptions,
                 lifespan: 0,
@@ -64,6 +67,7 @@ export class SpaceshipParticles {
             0,
             'flares-particles',
             {
+                name: 'speed',
                 frame: 'green',
                 ...powerUpsParticlesOptions,
                 lifespan: 1000,
@@ -76,6 +80,7 @@ export class SpaceshipParticles {
             scale: { start: 1, end: 0 },
             blendMode: Phaser.BlendModes.ADD,
             emitting: false,
+            name: 'explode',
         });
     }
 
@@ -111,23 +116,19 @@ export class SpaceshipParticles {
     }
 
     private onEmitParticle(particle: Phaser.GameObjects.Particles.Particle) {
-        let x, y;
-        if (
-            this.spaceship.currentPowerUp === configs.powerUp.types.shield &&
-            particle.frame.name === 'blue'
-        ) {
+        let x = particle.x;
+        let y = particle.y;
+
+        if (particle.emitter.name === 'shield') {
             x = this.spaceship.x + Math.random() * 50 - 25;
             y = this.spaceship.y + Math.random() * 50 - 25;
-        } else if (
-            this.spaceship.currentPowerUp === configs.powerUp.types.fire &&
-            particle.frame.name === 'red'
-        ) {
+        } else if (particle.emitter.name === 'fire') {
             x = this.spaceship.x + Math.cos(this.spaceship.rotation) * 30;
             y = this.spaceship.y + Math.sin(this.spaceship.rotation) * 30;
         } else {
             // Set the particles position to the spaceship's position
-            x = this.spaceship.x + Math.cos(this.spaceship.rotation) * -30;
-            y = this.spaceship.y + Math.sin(this.spaceship.rotation) * -30;
+            x = this.spaceship.x + Math.cos(this.spaceship.rotation) * -40;
+            y = this.spaceship.y + Math.sin(this.spaceship.rotation) * -40;
         }
 
         particle.setPosition(x, y);
