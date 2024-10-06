@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://cmmv.io/" target="blank"><img src="https://raw.githubusercontent.com/diegofer25/spacewar-multiplayer/client/src/assets/images/logo.png" width="300" alt="Spacewar JS Logo" /></a>
+  <a href="https://lively-pond-07951410f.5.azurestaticapps.net" target="blank"><img src="https://github.com/diegofer25/spacewar-multiplayer/blob/main/client/src/assets/images/logo.png?raw=true" width="300" alt="Spacewar JS Logo" /></a>
 </p>
 <p align="center">A multiplayer space war game built using PhaserJS and ColyseusJS. This game allows multiple players to join a space battle, maneuver their ships, and shoot down opponents in real-time.</p>
 
