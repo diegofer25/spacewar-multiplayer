@@ -52,7 +52,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
 
         this.name = id;
         this._isPlayer = isPlayer;
-        this._turbineSound = _scene.sound.add('turbine', { loop: true, volume: 0.01 });
+        this._turbineSound = _scene.sound.add('turbine', { loop: true, volume: 0.05 });
 
         // Add spaceship to scene
         _scene.physics.world.enable(this);
