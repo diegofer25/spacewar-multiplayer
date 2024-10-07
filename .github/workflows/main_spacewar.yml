@@ -4,72 +4,73 @@
 name: Build and deploy Node.js app to Azure Web App - spacewar
 
 on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'client/**'
-      - '.github/workflows/azure-static-web-apps-lively-pond-07951410f.yml'
-      - '.vscode/**'
-      - 'loadtest/**'
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+        paths-ignore:
+            - 'client/**'
+            - '.github/workflows/azure-static-web-apps-lively-pond-07951410f.yml'
+            - '.vscode/**'
+            - 'loadtest/**'
+            - 'README.mds'
+    workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
+            - name: Set up Node.js version
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '20.x'
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+            - name: npm install, build, and test
+              run: |
+                  npm install
+                  npm run build --if-present
+                  npm run test --if-present
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+            - name: Zip artifact for deployment
+              run: zip release.zip ./* -r
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: node-app
-          path: release.zip
+            - name: Upload artifact for deployment job
+              uses: actions/upload-artifact@v4
+              with:
+                  name: node-app
+                  path: release.zip
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
+    deploy:
+        runs-on: ubuntu-latest
+        needs: build
+        environment:
+            name: 'Production'
+            url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+        permissions:
+            id-token: write #This is required for requesting the JWT
 
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: node-app
+        steps:
+            - name: Download artifact from build job
+              uses: actions/download-artifact@v4
+              with:
+                  name: node-app
 
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_70085600B48A43A7869B520E692A3933 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_47DD6ABA3C29490696CC795106FD3C3E }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_824E45D406204CBAA38EBD7B63CBB690 }}
+            - name: Unzip artifact for deployment
+              run: unzip release.zip
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'spacewar'
-          slot-name: 'Production'
-          package: .
+            - name: Login to Azure
+              uses: azure/login@v2
+              with:
+                  client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_70085600B48A43A7869B520E692A3933 }}
+                  tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_47DD6ABA3C29490696CC795106FD3C3E }}
+                  subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_824E45D406204CBAA38EBD7B63CBB690 }}
+
+            - name: 'Deploy to Azure Web App'
+              id: deploy-to-webapp
+              uses: azure/webapps-deploy@v3
+              with:
+                  app-name: 'spacewar'
+                  slot-name: 'Production'
+                  package: .

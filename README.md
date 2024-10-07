@@ -19,7 +19,7 @@
 
 ### Installation
 
-1. Clone the repository:
+1. Fork the repository:
 
     ```bash
     git clone https://github.com/diegofer25/spacewar-multiplayer.git
@@ -64,6 +64,12 @@ The client is built with PhaserJS, rendering the game on the browser and handlin
 -   Entry point: `client/src/main.ts`
 -   Game scenes: `client/src/main-scene/main.scene.ts`
 
+### Assets
+
+-   **Images**: The game assets for images are generated using [Leonardo AI](https://leonardo.ai).
+-   **Music**: Background music is created with [Beatoven AI](https://www.beatoven.ai/).
+-   **Sound Effects**: Sound effects are sourced from [Pixabay](https://pixabay.com/sound-effects/).
+
 ### Contributing
 
 Feel free to submit issues, fork the repository, and create pull requests. We appreciate all contributions to improve the project.
@@ -76,3 +82,6 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 -   [PhaserJS](https://phaser.io/)
 -   [ColyseusJS](https://colyseus.io/)
+-   [Leonardo AI](https://leonardo.ai)
+-   [Beatoven AI](https://www.beatoven.ai)
+-   [Pixabay](https://pixabay.com/sound-effects/)
