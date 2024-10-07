@@ -147,39 +147,24 @@ export class Game extends Room<GameState> {
         this.state.spaceships.forEach((spaceship, userId) => {
             if (spaceship.isExploding) {
                 if (spaceship.reviveTimestamp && spaceship.reviveTimestamp <= Date.now()) {
-                    spaceship.isExploding = false;
-                    spaceship.x = Math.random() * configs.global.mapSize;
-                    spaceship.y = Math.random() * configs.global.mapSize;
-                    spaceship.speedX = 0;
-                    spaceship.speedY = 0;
-                    spaceship.rotation = 0;
-                    spaceship.powerUp = -1;
+                    resetSpaceship();
                 } else {
                     return;
                 }
             }
 
-            if (Date.now() > spaceship.powerUpExpiryTimestamp && spaceship.powerUp >= 0) {
-                spaceship.powerUp = -1;
-                spaceship.fireRate = configs.spaceship.initialFireRate;
-                spaceship.maxVelocity = configs.spaceship.initialMaxVelocity;
-                spaceship.angularVelocity = configs.spaceship.initialAngularVelocity;
+            const shouldRemovePowerUp =
+                Date.now() > spaceship.powerUpExpiryTimestamp && spaceship.powerUp >= 0;
+            if (shouldRemovePowerUp) {
+                removePowerUp();
             }
 
-            if (spaceship.isShooting && spaceship.nextFireTimestamp <= Date.now()) {
-                spaceship.nextFireTimestamp = Date.now() + spaceship.fireRate;
-                const laser = new SpaceshipLaser(
-                    spaceship.x,
-                    spaceship.y,
-                    spaceship.rotation,
-                    userId,
-                );
-                laser.x = spaceship.x;
-                laser.y = spaceship.y;
-                laser.lifeTime = Date.now() + configs.laser.lifeTime;
-                this.state.lasers.set(uuidV4(), laser);
+            const shouldShoot = spaceship.isShooting && spaceship.nextFireTimestamp <= Date.now();
+            if (shouldShoot) {
+                this.state.lasers.set(uuidV4(), createLaser());
             }
 
+            // check iterations with other spaceships
             this.state.spaceships.forEach((enemySpaceship, enemyUserId) => {
                 if (enemyUserId === userId) {
                     return;
@@ -199,6 +184,7 @@ export class Game extends Room<GameState> {
                 }
             });
 
+            // check iterations with power ups
             this.state.powerUps.forEach((powerUp, key) => {
                 if (powerUp.lifeTime < Date.now()) {
                     this.state.powerUps.delete(key);
@@ -219,6 +205,8 @@ export class Game extends Room<GameState> {
                     }
                 }
             });
+
+            // check iterations with lasers
             this.state.lasers.forEach((laser, key) => {
                 if (laser.lifeTime <= Date.now()) {
                     this.state.lasers.delete(key);
@@ -238,6 +226,38 @@ export class Game extends Room<GameState> {
                 this.processDestroySpaceship(spaceship, enemySpaceship);
                 this.state.lasers.delete(key);
             });
+
+            function createLaser() {
+                spaceship.nextFireTimestamp = Date.now() + spaceship.fireRate;
+                const laser = new SpaceshipLaser(
+                    spaceship.x,
+                    spaceship.y,
+                    spaceship.rotation,
+                    userId,
+                );
+                laser.x = spaceship.x;
+                laser.y = spaceship.y;
+                laser.lifeTime = Date.now() + configs.laser.lifeTime;
+
+                return laser;
+            }
+
+            function resetSpaceship() {
+                spaceship.isExploding = false;
+                spaceship.x = Math.random() * configs.global.mapSize;
+                spaceship.y = Math.random() * configs.global.mapSize;
+                spaceship.speedX = 0;
+                spaceship.speedY = 0;
+                spaceship.rotation = 0;
+                spaceship.powerUp = -1;
+            }
+
+            function removePowerUp() {
+                spaceship.powerUp = -1;
+                spaceship.fireRate = configs.spaceship.initialFireRate;
+                spaceship.maxVelocity = configs.spaceship.initialMaxVelocity;
+                spaceship.angularVelocity = configs.spaceship.initialAngularVelocity;
+            }
         });
     }
 
