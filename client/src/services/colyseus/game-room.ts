@@ -12,14 +12,27 @@ export class GameRoom {
     static shouldSendUpdate = true;
 
     static async join(options: StartGameOptions) {
-        return getRoomsManager().joinRoom('game', options);
+        await getRoomsManager().joinRoom('game', options);
+
+        const sendPing = () => {
+            this.lastMessageSentTimestamp = Date.now();
+            getRoomsManager().sendMessage('game', 'ping', {});
+        };
+        const onPong = async (timeToWaitUntilNextPing: number) => {
+            this.latency = Date.now() - this.lastMessageSentTimestamp;
+
+            await new Promise(resolve => setTimeout(resolve, timeToWaitUntilNextPing));
+
+            sendPing();
+        };
+
+        getRoomsManager().onRoomMessage('game', 'pong', onPong);
+        sendPing();
     }
 
+    // SUBSCRIBERS
     static listenStateUpdate(callback: (state: GameState) => void) {
-        getRoomsManager().onRoomStateChange<GameState>('game', state => {
-            this.latency = Date.now() - this.lastMessageSentTimestamp;
-            callback(state);
-        });
+        getRoomsManager().onRoomStateChange<GameState>('game', callback);
     }
 
     static listenAddSpaceship(callback: (item: Spaceship, key: string) => void) {
@@ -46,13 +59,13 @@ export class GameRoom {
         getRoomsManager().getRoom<GameState>('game').state.lasers.onRemove(callback);
     }
 
+    // PUBLISHERS
     static sendStateUpdate(payload: StateUpdateEvent) {
         this.lastMessageSentTimestamp = Date.now();
         getRoomsManager().sendMessage('game', 'state-update', payload);
     }
 
     static sendStartGame(options: StartGameOptions) {
-        this.lastMessageSentTimestamp = Date.now();
         getRoomsManager().sendMessage('game', 'start-game', options);
     }
 }

@@ -9,11 +9,16 @@ import { SpaceshipLaser } from './schemas/spaceship-laser';
 import { ISpaceship, Spaceship } from './schemas/spaceship.schema';
 
 export class Game extends Room<GameState> {
-    maxClients = 1000;
+    maxClients = 100;
     private _powerUpCreationDelay = 0;
 
     onCreate() {
         this.setState(new GameState());
+
+        this.onMessage('ping', (client: Client) => {
+            const timeToWaitUntilNextPing = Math.min(this.clients.length * 100, 1000);
+            client.send('pong', timeToWaitUntilNextPing);
+        });
 
         this.onMessage('state-update', (client: Client, data: StateUpdateEvent) => {
             this.onSpaceshipStateUpdate(client, data.spaceship);
@@ -139,40 +144,29 @@ export class Game extends Room<GameState> {
     }
 
     private checkStateAndUpdate() {
-        for (const [userId, spaceship] of this.state.spaceships) {
+        this.state.spaceships.forEach((spaceship, userId) => {
             if (spaceship.isExploding) {
-                // revive spaceship
                 if (spaceship.reviveTimestamp && spaceship.reviveTimestamp <= Date.now()) {
                     spaceship.isExploding = false;
-                    spaceship.reviveTimestamp = 0;
                     spaceship.x = Math.random() * configs.global.mapSize;
                     spaceship.y = Math.random() * configs.global.mapSize;
                     spaceship.speedX = 0;
                     spaceship.speedY = 0;
-                    spaceship.rotation = Math.random() * 360;
+                    spaceship.rotation = 0;
                     spaceship.powerUp = -1;
                 } else {
-                    // skip update if spaceship is exploding
                     return;
                 }
             }
 
-            const shouldRemovePowerUp =
-                spaceship.powerUpExpiryTimestamp &&
-                (Date.now() > spaceship.powerUpExpiryTimestamp || spaceship.powerUp >= 0);
-
-            if (shouldRemovePowerUp) {
-                spaceship.powerUpExpiryTimestamp = 0;
+            if (Date.now() > spaceship.powerUpExpiryTimestamp && spaceship.powerUp >= 0) {
                 spaceship.powerUp = -1;
                 spaceship.fireRate = configs.spaceship.initialFireRate;
                 spaceship.maxVelocity = configs.spaceship.initialMaxVelocity;
                 spaceship.angularVelocity = configs.spaceship.initialAngularVelocity;
             }
 
-            const shouldFireBullet =
-                spaceship.isShooting && spaceship.nextFireTimestamp <= Date.now();
-
-            if (shouldFireBullet) {
+            if (spaceship.isShooting && spaceship.nextFireTimestamp <= Date.now()) {
                 spaceship.nextFireTimestamp = Date.now() + spaceship.fireRate;
                 const laser = new SpaceshipLaser(
                     spaceship.x,
@@ -186,7 +180,7 @@ export class Game extends Room<GameState> {
                 this.state.lasers.set(uuidV4(), laser);
             }
 
-            for (const [enemyUserId, enemySpaceship] of this.state.spaceships) {
+            this.state.spaceships.forEach((enemySpaceship, enemyUserId) => {
                 if (enemyUserId === userId) {
                     return;
                 }
@@ -203,9 +197,9 @@ export class Game extends Room<GameState> {
                         this.processDestroySpaceship(enemySpaceship, spaceship);
                     }
                 }
-            }
+            });
 
-            for (const [key, powerUp] of this.state.powerUps) {
+            this.state.powerUps.forEach((powerUp, key) => {
                 if (powerUp.lifeTime < Date.now()) {
                     this.state.powerUps.delete(key);
                 } else if (
@@ -224,9 +218,8 @@ export class Game extends Room<GameState> {
                         spaceship.angularVelocity = configs.spaceship.angularVelocityWithPowerUp;
                     }
                 }
-            }
-
-            for (const [key, laser] of this.state.lasers) {
+            });
+            this.state.lasers.forEach((laser, key) => {
                 if (laser.lifeTime <= Date.now()) {
                     this.state.lasers.delete(key);
                     return;
@@ -244,8 +237,8 @@ export class Game extends Room<GameState> {
 
                 this.processDestroySpaceship(spaceship, enemySpaceship);
                 this.state.lasers.delete(key);
-            }
-        }
+            });
+        });
     }
 
     private processDestroySpaceship(spaceship: ISpaceship, enemySpaceship: ISpaceship) {

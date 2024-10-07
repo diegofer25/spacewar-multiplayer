@@ -48,7 +48,7 @@ export class RankingDomElement extends Phaser.GameObjects.DOMElement {
                         ${rankingText}
                     </tbody>
                 </table>
-                ${location.search.includes('stats') ? `<div style="margin-top: 5px;">Latency: ${latency}ms</div>` : ''}
+                <div style="margin-top: 5px;">Latency: ${latency}ms</div>
             </div>
         `;
 
