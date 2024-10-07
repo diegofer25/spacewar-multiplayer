@@ -139,29 +139,40 @@ export class Game extends Room<GameState> {
     }
 
     private checkStateAndUpdate() {
-        this.state.spaceships.forEach((spaceship, userId) => {
+        for (const [userId, spaceship] of this.state.spaceships) {
             if (spaceship.isExploding) {
+                // revive spaceship
                 if (spaceship.reviveTimestamp && spaceship.reviveTimestamp <= Date.now()) {
                     spaceship.isExploding = false;
+                    spaceship.reviveTimestamp = 0;
                     spaceship.x = Math.random() * configs.global.mapSize;
                     spaceship.y = Math.random() * configs.global.mapSize;
                     spaceship.speedX = 0;
                     spaceship.speedY = 0;
-                    spaceship.rotation = 0;
+                    spaceship.rotation = Math.random() * 360;
                     spaceship.powerUp = -1;
                 } else {
+                    // skip update if spaceship is exploding
                     return;
                 }
             }
 
-            if (Date.now() > spaceship.powerUpExpiryTimestamp && spaceship.powerUp >= 0) {
+            const shouldRemovePowerUp =
+                spaceship.powerUpExpiryTimestamp &&
+                (Date.now() > spaceship.powerUpExpiryTimestamp || spaceship.powerUp >= 0);
+
+            if (shouldRemovePowerUp) {
+                spaceship.powerUpExpiryTimestamp = 0;
                 spaceship.powerUp = -1;
                 spaceship.fireRate = configs.spaceship.initialFireRate;
                 spaceship.maxVelocity = configs.spaceship.initialMaxVelocity;
                 spaceship.angularVelocity = configs.spaceship.initialAngularVelocity;
             }
 
-            if (spaceship.isShooting && spaceship.nextFireTimestamp <= Date.now()) {
+            const shouldFireBullet =
+                spaceship.isShooting && spaceship.nextFireTimestamp <= Date.now();
+
+            if (shouldFireBullet) {
                 spaceship.nextFireTimestamp = Date.now() + spaceship.fireRate;
                 const laser = new SpaceshipLaser(
                     spaceship.x,
@@ -175,7 +186,7 @@ export class Game extends Room<GameState> {
                 this.state.lasers.set(uuidV4(), laser);
             }
 
-            this.state.spaceships.forEach((enemySpaceship, enemyUserId) => {
+            for (const [enemyUserId, enemySpaceship] of this.state.spaceships) {
                 if (enemyUserId === userId) {
                     return;
                 }
@@ -192,9 +203,9 @@ export class Game extends Room<GameState> {
                         this.processDestroySpaceship(enemySpaceship, spaceship);
                     }
                 }
-            });
+            }
 
-            this.state.powerUps.forEach((powerUp, key) => {
+            for (const [key, powerUp] of this.state.powerUps) {
                 if (powerUp.lifeTime < Date.now()) {
                     this.state.powerUps.delete(key);
                 } else if (
@@ -213,8 +224,9 @@ export class Game extends Room<GameState> {
                         spaceship.angularVelocity = configs.spaceship.angularVelocityWithPowerUp;
                     }
                 }
-            });
-            this.state.lasers.forEach((laser, key) => {
+            }
+
+            for (const [key, laser] of this.state.lasers) {
                 if (laser.lifeTime <= Date.now()) {
                     this.state.lasers.delete(key);
                     return;
@@ -232,8 +244,8 @@ export class Game extends Room<GameState> {
 
                 this.processDestroySpaceship(spaceship, enemySpaceship);
                 this.state.lasers.delete(key);
-            });
-        });
+            }
+        }
     }
 
     private processDestroySpaceship(spaceship: ISpaceship, enemySpaceship: ISpaceship) {
@@ -298,12 +310,12 @@ export class Game extends Room<GameState> {
         );
     }
 
-    private isIntersecting(rec2: Rectangle, rect2: Rectangle) {
+    private isIntersecting(rect1: Rectangle, rect2: Rectangle) {
         return (
-            rec2.x < rect2.x + rect2.width &&
-            rec2.x + rec2.width > rect2.x &&
-            rec2.y < rect2.y + rect2.height &&
-            rec2.y + rec2.height > rect2.y
+            rect1.x < rect2.x + rect2.width &&
+            rect1.x + rect1.width > rect2.x &&
+            rect1.y < rect2.y + rect2.height &&
+            rect1.y + rect1.height > rect2.y
         );
     }
 }
