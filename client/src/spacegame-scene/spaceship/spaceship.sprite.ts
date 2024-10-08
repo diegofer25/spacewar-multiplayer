@@ -194,7 +194,6 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         if (Math.abs(this.x - spaceship.x) > 50 || Math.abs(this.y - spaceship.y) > 50) {
             this.setPosition(spaceship.x, spaceship.y);
         }
-        console.log(this.rotation, spaceship.rotation);
         if (Math.abs(this.rotation - spaceship.rotation) > 1) {
             this.setRotation(spaceship.rotation);
         }
