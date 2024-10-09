@@ -21,6 +21,7 @@
         "tfjs",
         "Tilemaps",
         "tilesprite",
-        "virtualjoystick"
+        "virtualjoystick",
+        "wasd"
     ]
 }

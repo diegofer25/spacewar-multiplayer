@@ -29,6 +29,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     private _currentPowerUp = -1;
 
     static preload(scene: Phaser.Scene) {
+        SpaceshipControls.preload(scene);
         SpaceshipLaser.preload(scene);
         scene.load
             .image('spaceship', spaceshipImage)
@@ -136,8 +137,6 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         if (this._isExploding) {
             return;
         }
-
-        this._spaceshipControls?.runUpdates();
 
         // print username in the top of the spaceship
         if (!this._usernameText) {

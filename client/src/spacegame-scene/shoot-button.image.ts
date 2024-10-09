@@ -1,8 +1,6 @@
 import shootButtonImage from 'client/assets/images/shoot-button.png';
-import { GameObjectLifeCycle } from 'client/spacegame-scene/spacegame.scene';
-import { SpaceshipSprite } from 'client/spacegame-scene/spaceship/spaceship.sprite';
 
-export class ShootButtonImage extends Phaser.GameObjects.Image implements GameObjectLifeCycle {
+export class ShootButtonImage extends Phaser.GameObjects.Image {
     private _isShooting = false;
 
     static preload(scene: Phaser.Scene) {
@@ -43,21 +41,5 @@ export class ShootButtonImage extends Phaser.GameObjects.Image implements GameOb
                 this.clearTint();
             }
         });
-    }
-
-    runUpdates(): void {
-        if (this._isShooting) {
-            this.shoot();
-        }
-    }
-
-    shoot() {
-        const player = this.scene.children
-            .getChildren()
-            .find(child => child instanceof SpaceshipSprite && child.isPlayer) as SpaceshipSprite;
-
-        if (player) {
-            // send to the server that the player is shooting
-        }
     }
 }
