@@ -1,10 +1,10 @@
 import { StartGameOptions, StateUpdateEvent } from 'server/rooms/game/game.room';
 import { GameState } from 'server/rooms/game/schemas/game-state.schema';
 
-import { getRoomsManager } from 'client/services/colyseus/rooms-manager';
 import { Spaceship } from 'server/rooms/game/schemas/spaceship.schema';
 import { PowerUp } from 'server/rooms/game/schemas/power-up.schema';
 import { SpaceshipLaser } from 'server/rooms/game/schemas/spaceship-laser';
+import { getRoomsManager } from 'client/colyseus/rooms-manager';
 
 export class GameRoom {
     static lastMessageSentTimestamp = Date.now();
@@ -61,7 +61,6 @@ export class GameRoom {
 
     // PUBLISHERS
     static sendStateUpdate(payload: StateUpdateEvent) {
-        this.lastMessageSentTimestamp = Date.now();
         getRoomsManager().sendMessage('game', 'state-update', payload);
     }
 

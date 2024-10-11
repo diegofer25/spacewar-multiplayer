@@ -1,8 +1,6 @@
 import Phaser from 'phaser';
 
 export class RankingDomElement extends Phaser.GameObjects.DOMElement {
-    private _lastScoreText: string = '';
-
     constructor(scene: Phaser.Scene) {
         const el = document.createElement('div');
 
@@ -32,10 +30,6 @@ export class RankingDomElement extends Phaser.GameObjects.DOMElement {
             )
             .join('');
 
-        // if (rankingText === this._lastScoreText) {
-        //     return;
-        // }
-
         this.node.innerHTML = `
             <div>
                 <table style="border-collapse: collapse;">
@@ -51,7 +45,5 @@ export class RankingDomElement extends Phaser.GameObjects.DOMElement {
                 <div style="margin-top: 5px;">Latency: ${latency}ms</div>
             </div>
         `;
-
-        this._lastScoreText = rankingText;
     }
 }

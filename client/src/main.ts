@@ -1,8 +1,7 @@
-import Phaser from 'phaser';
-import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
-import Stats from 'stats.js';
-
 import { SpaceGameScene } from 'client/spacegame-scene/spacegame.scene';
+import Phaser from 'phaser';
+import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin';
+import Stats from 'stats.js';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,

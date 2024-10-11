@@ -71,8 +71,8 @@ class RoomsManager {
 }
 
 export function getRoomsManager() {
-    if (!roomsManager && typeof process.env.WEBSOCKET_SERVER_URL === 'string') {
-        roomsManager = new RoomsManager(process.env.WEBSOCKET_SERVER_URL);
+    if (!roomsManager && typeof import.meta.env.VITE_WEBSOCKET_SERVER_URL === 'string') {
+        roomsManager = new RoomsManager(import.meta.env.VITE_WEBSOCKET_SERVER_URL);
     }
 
     return roomsManager;

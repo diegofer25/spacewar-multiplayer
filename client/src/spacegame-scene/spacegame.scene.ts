@@ -1,10 +1,9 @@
 import { MapSchema } from '@colyseus/schema';
-import Phaser, { Game } from 'phaser';
+import Phaser from 'phaser';
 import { StartGameOptions } from 'server/rooms/game/game.room';
 import { Spaceship } from 'server/rooms/game/schemas/spaceship.schema';
 import { v4 as uuidV4 } from 'uuid';
 
-import { GameRoom } from 'client/services/colyseus/game-room';
 import { Background } from 'client/spacegame-scene/background.tilesprite';
 import { PowerUpSprite } from 'client/spacegame-scene/power-up.sprite';
 import { RankingDomElement } from 'client/spacegame-scene/ranking.dom';
@@ -12,6 +11,7 @@ import { SpaceshipSprite } from 'client/spacegame-scene/spaceship/spaceship.spri
 import logoImage from 'client/assets/images/logo.png';
 
 import configs from 'shared-configs';
+import { GameRoom } from 'client/colyseus/game-room';
 
 export class SpaceGameScene extends Phaser.Scene {
     private _objects: Map<string, GameObjectLifeCycle> = new Map();
@@ -75,7 +75,7 @@ export class SpaceGameScene extends Phaser.Scene {
 
         return new Promise(resolve => {
             GameRoom.listenStateUpdate(state => {
-                this.processSpaceshipStateUpdate(state.spaceships, options.userId);
+                this.processSpaceshipStateUpdate(state.spaceships);
 
                 this.renderRank(state.spaceships, GameRoom.latency);
 
@@ -167,7 +167,7 @@ export class SpaceGameScene extends Phaser.Scene {
         return { userId, username };
     }
 
-    private processSpaceshipStateUpdate(spaceships: MapSchema<Spaceship, string>, userId: string) {
+    private processSpaceshipStateUpdate(spaceships: MapSchema<Spaceship, string>) {
         spaceships.forEach((spaceship, _userId) => {
             const storedSpaceship = this._objects.get(_userId) as SpaceshipSprite;
             if (storedSpaceship) {

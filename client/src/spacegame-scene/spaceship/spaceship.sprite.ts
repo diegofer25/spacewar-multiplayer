@@ -6,7 +6,6 @@ import flaredParticlesJson from 'client/assets/json/flares-particles.json';
 import Phaser from 'phaser';
 import { SpaceshipStateToUpdate } from 'server/rooms/game/game.room';
 
-import { GameRoom } from 'client/services/colyseus/game-room';
 import { GameObjectLifeCycle, SpaceGameScene } from 'client/spacegame-scene/spacegame.scene';
 import { SpaceshipControls } from 'client/spacegame-scene/spaceship/spaceship-controls';
 import { SpaceshipLaserGun } from 'client/spacegame-scene/spaceship/spaceship-gun';
@@ -14,6 +13,7 @@ import { SpaceshipLaser } from 'client/spacegame-scene/spaceship/spaceship-laser
 import { SpaceshipParticles } from 'client/spacegame-scene/spaceship/spaceship-particles';
 import configs from 'shared-configs';
 import { ISpaceship } from 'server/rooms/game/schemas/spaceship.schema';
+import { GameRoom } from 'client/colyseus/game-room';
 
 export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements GameObjectLifeCycle {
     private _spaceshipControls?: SpaceshipControls;
@@ -39,7 +39,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     }
 
     constructor(
-        private _scene: SpaceGameScene,
+        _scene: SpaceGameScene,
         x: number,
         y: number,
         rotation: number,

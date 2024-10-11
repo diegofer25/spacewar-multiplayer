@@ -1,21 +1,4 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "es2020",
-        "strict": true,
-        "noImplicitAny": true,
-        "moduleResolution": "node",
-        "sourceMap": true,
-        "outDir": "./dist",
-        "resolveJsonModule": true,
-        "esModuleInterop": true,
-        "baseUrl": ".",
-        "paths": {
-            "client/*": ["src/*"],
-            "server/*": ["../src/*"],
-            "shared-configs": ["../shared-configs.json"]
-        }
-    },
-    "include": ["src/**/*.ts", "declarations.d.ts", "./../src/**/*.ts", "./../shared-configs.json"],
-    "exclude": ["node_modules"]
+    "files": [],
+    "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }
