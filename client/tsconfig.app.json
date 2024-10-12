@@ -15,7 +15,7 @@
         "baseUrl": ".",
         "paths": {
             "client/*": ["src/*"],
-            "server/*": ["../src/*"],
+            "sharedTypes": ["../types/index.ts"],
             "shared-configs": ["../shared-configs.json"]
         },
 
@@ -28,7 +28,7 @@
         "src/**/*.ts",
         "src/**/*.tsx",
         "src/**/*.vue",
-        "./../src/**/*.ts",
-        "./../shared-configs.json"
+        "./../shared-configs.json",
+        "./../types/index.ts"
     ]
 }

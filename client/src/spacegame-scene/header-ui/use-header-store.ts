@@ -1,5 +1,5 @@
 import GameHeader from 'client/spacegame-scene/header-ui/GameHeader.vue';
-import { StartGameOptions } from 'server/rooms/game/game.room';
+import { StartGameOptions } from 'sharedTypes';
 import { computed, createApp, reactive, watch } from 'vue';
 
 const state = reactive({

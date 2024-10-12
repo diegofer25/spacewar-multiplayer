@@ -1,6 +1,7 @@
 import { Schema, type } from '@colyseus/schema';
 
-import configs from '../../../../shared-configs.json';
+import configs from 'shared-configs';
+import { ISpaceship } from 'sharedTypes';
 
 export class Spaceship extends Schema implements ISpaceship {
     @type('boolean') connected = true;
@@ -32,28 +33,4 @@ export class Spaceship extends Schema implements ISpaceship {
         this.x = Math.random() * configs.global.mapSize;
         this.y = Math.random() * configs.global.mapSize;
     }
-}
-
-export interface ISpaceship {
-    connected: boolean;
-    isShooting: boolean;
-    isTurningLeft: boolean;
-    isTurningRight: boolean;
-    isAccelerating: boolean;
-    isExploding: boolean;
-    x: number;
-    y: number;
-    speedY: number;
-    speedX: number;
-    rotation: number;
-    score: number;
-    powerUp: number;
-    maxVelocity: number;
-    angularVelocity: number;
-    sessionId: string;
-    username: string;
-    fireRate: number;
-    nextFireTimestamp: number;
-    reviveTimestamp: number;
-    powerUpExpiryTimestamp: number;
 }

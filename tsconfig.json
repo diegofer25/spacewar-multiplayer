@@ -13,7 +13,13 @@
         "useDefineForClassFields": false,
         "sourceMap": true,
         "resolveJsonModule": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "baseUrl": ".",
+        "paths": {
+            "src/*": ["src/*"],
+            "sharedTypes": ["types/index.ts"],
+            "shared-configs": ["./shared-configs.json"]
+        }
     },
-    "include": ["src"]
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "./../types/index.ts"]
 }

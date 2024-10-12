@@ -1,5 +1,7 @@
 import { Schema, type } from '@colyseus/schema';
 
+import { ISpaceshipLaser } from 'sharedTypes';
+
 export class SpaceshipLaser extends Schema implements ISpaceshipLaser {
     @type('number') x: number;
     @type('number') y: number;
@@ -14,12 +16,4 @@ export class SpaceshipLaser extends Schema implements ISpaceshipLaser {
         this.rotation = rotation;
         this.spaceshipName = spaceshipName;
     }
-}
-
-export interface ISpaceshipLaser {
-    spaceshipName: string;
-    x: number;
-    y: number;
-    rotation: number;
-    lifeTime: number;
 }

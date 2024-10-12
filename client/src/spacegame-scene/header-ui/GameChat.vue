@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { GameRoom } from 'client/colyseus/game-room';
 import { useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
-import { ChatMessage } from 'server/rooms/game/game.room';
+import { ChatMessage } from 'sharedTypes';
 import { ref, onMounted, nextTick } from 'vue';
 
 const { state, setIsTyping } = useHeaderStore();

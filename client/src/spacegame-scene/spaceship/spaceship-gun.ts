@@ -6,7 +6,7 @@ import { SpaceshipSprite } from 'client/spacegame-scene/spaceship/spaceship.spri
 export class SpaceshipLaserGun {
     private _lasers: Map<string, SpaceshipLaser> = new Map();
 
-    static preload(scene: Phaser.Scene, spaceship: SpaceshipSprite) {
+    static preload(scene: Phaser.Scene) {
         ShootButtonImage.preload(scene);
     }
 

@@ -1,11 +1,12 @@
 import { Schema, type, MapSchema } from '@colyseus/schema';
 
-import { PowerUp } from './power-up.schema';
-import { SpaceshipLaser } from './spaceship-laser';
-import { Spaceship } from './spaceship.schema';
+import { IGameState, IPowerUp, ISpaceship, ISpaceshipLaser } from 'sharedTypes';
+import { PowerUp } from 'src/rooms/game/schemas/power-up.schema';
+import { SpaceshipLaser } from 'src/rooms/game/schemas/spaceship-laser';
+import { Spaceship } from 'src/rooms/game/schemas/spaceship.schema';
 
-export class GameState extends Schema {
-    @type({ map: Spaceship }) spaceships = new MapSchema<Spaceship>();
-    @type({ map: SpaceshipLaser }) lasers = new MapSchema<SpaceshipLaser>();
-    @type({ map: PowerUp }) powerUps = new MapSchema<PowerUp>();
+export class GameState extends Schema implements IGameState {
+    @type({ map: Spaceship }) spaceships = new MapSchema<ISpaceship>();
+    @type({ map: SpaceshipLaser }) lasers = new MapSchema<ISpaceshipLaser>();
+    @type({ map: PowerUp }) powerUps = new MapSchema<IPowerUp>();
 }

@@ -1,12 +1,21 @@
 import { Room, Client } from '@colyseus/core';
 import { v4 as uuidV4 } from 'uuid';
 
-import configs from '../../../shared-configs.json';
-
-import { GameState } from './schemas/game-state.schema';
-import { PowerUp } from './schemas/power-up.schema';
-import { SpaceshipLaser } from './schemas/spaceship-laser';
-import { ISpaceship, Spaceship } from './schemas/spaceship.schema';
+import configs from 'shared-configs';
+import {
+    ChatMessage,
+    IPowerUp,
+    ISpaceship,
+    ISpaceshipLaser,
+    LaserUpdate,
+    SpaceshipStateToUpdate,
+    StartGameOptions,
+    StateUpdateEvent,
+} from 'sharedTypes';
+import { GameState } from 'src/rooms/game/schemas/game-state.schema';
+import { PowerUp } from 'src/rooms/game/schemas/power-up.schema';
+import { SpaceshipLaser } from 'src/rooms/game/schemas/spaceship-laser';
+import { Spaceship } from 'src/rooms/game/schemas/spaceship.schema';
 
 export class Game extends Room<GameState> {
     maxClients = 100;
@@ -283,7 +292,7 @@ export class Game extends Room<GameState> {
         enemySpaceship.score += 1;
     }
 
-    private spaceshipCollectedPowerUp(spaceship: ISpaceship, powerUp: PowerUp) {
+    private spaceshipCollectedPowerUp(spaceship: ISpaceship, powerUp: IPowerUp) {
         return this.isIntersecting(
             {
                 x: spaceship.x,
@@ -300,7 +309,7 @@ export class Game extends Room<GameState> {
         );
     }
 
-    private spaceshipHitByLaser(spaceship: ISpaceship, laser: SpaceshipLaser) {
+    private spaceshipHitByLaser(spaceship: ISpaceship, laser: ISpaceshipLaser) {
         return this.isIntersecting(
             {
                 x: spaceship.x,
@@ -350,39 +359,4 @@ interface Vector {
 interface Rectangle extends Vector {
     width: number;
     height: number;
-}
-
-export interface StartGameOptions {
-    userId: string;
-    username: string;
-}
-
-export type SpaceshipStateToUpdate = Pick<
-    ISpaceship,
-    | 'isShooting'
-    | 'isTurningLeft'
-    | 'isTurningRight'
-    | 'isAccelerating'
-    | 'x'
-    | 'y'
-    | 'speedY'
-    | 'speedX'
-    | 'rotation'
->;
-
-export interface LaserUpdate {
-    x: number;
-    y: number;
-    key: string;
-}
-
-export interface StateUpdateEvent {
-    spaceship: SpaceshipStateToUpdate;
-    lasers: LaserUpdate[];
-}
-
-export interface ChatMessage {
-    userId: string;
-    message: string;
-    username: string;
 }

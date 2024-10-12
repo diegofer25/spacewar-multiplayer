@@ -1,7 +1,5 @@
 import { MapSchema } from '@colyseus/schema';
 import Phaser from 'phaser';
-import { StartGameOptions } from 'server/rooms/game/game.room';
-import { Spaceship } from 'server/rooms/game/schemas/spaceship.schema';
 import { v4 as uuidV4 } from 'uuid';
 
 import { Background } from 'client/spacegame-scene/background.tilesprite';
@@ -12,6 +10,7 @@ import logoImage from 'client/assets/images/logo.png';
 import configs from 'shared-configs';
 import { GameRoom } from 'client/colyseus/game-room';
 import { RankingItem, useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
+import { ISpaceship, StartGameOptions } from 'sharedTypes';
 
 export class SpaceGameScene extends Phaser.Scene {
     private _objects: Map<string, GameObjectLifeCycle> = new Map();
@@ -168,7 +167,7 @@ export class SpaceGameScene extends Phaser.Scene {
         return { userId, username };
     }
 
-    private processSpaceshipStateUpdate(spaceships: MapSchema<Spaceship, string>) {
+    private processSpaceshipStateUpdate(spaceships: MapSchema<ISpaceship, string>) {
         spaceships.forEach((spaceship, _userId) => {
             const storedSpaceship = this._objects.get(_userId) as SpaceshipSprite;
             if (storedSpaceship) {
@@ -177,7 +176,7 @@ export class SpaceGameScene extends Phaser.Scene {
         });
     }
 
-    private renderRank(spaceships: MapSchema<Spaceship, string>, latency: number) {
+    private renderRank(spaceships: MapSchema<ISpaceship, string>, latency: number) {
         const ranking: RankingItem[] = Array.from(spaceships.entries())
             .map(([userId, { username, score }]) => ({ username, score, userId }))
             .sort((a, b) => b.score - a.score);
