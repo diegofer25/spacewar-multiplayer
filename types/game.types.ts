@@ -1,15 +1,5 @@
-import { MapSchema } from '@colyseus/schema';
-
-import { IPowerUp } from 'types/power-up.types';
-
-import { ISpaceshipLaser, LaserUpdate } from './laser.types';
-import { ISpaceship, SpaceshipStateToUpdate } from './spaceship.types';
-
-export interface IGameState {
-    spaceships: MapSchema<ISpaceship>;
-    lasers: MapSchema<ISpaceshipLaser>;
-    powerUps: MapSchema<IPowerUp>;
-}
+import { LaserUpdate } from './laser.types';
+import { SpaceshipStateToUpdate } from './spaceship.types';
 
 export interface StartGameOptions {
     userId: string;
