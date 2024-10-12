@@ -1,7 +1,7 @@
-import { MapSchema } from '@colyseus/schema';
 import { getRoomsManager } from 'client/colyseus/rooms-manager';
 import {
     ChatMessage,
+    IGameState,
     IPowerUp,
     ISpaceship,
     ISpaceshipLaser,
@@ -81,10 +81,4 @@ export class GameRoom {
     static sendChatMessage(message: ChatMessage) {
         getRoomsManager().sendMessage('game', 'chat-message', message);
     }
-}
-
-interface IGameState {
-    spaceships: MapSchema<ISpaceship>;
-    lasers: MapSchema<ISpaceshipLaser>;
-    powerUps: MapSchema<IPowerUp>;
 }
