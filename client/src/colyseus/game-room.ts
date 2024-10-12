@@ -1,5 +1,6 @@
 import { MapSchema } from '@colyseus/schema';
 import { getRoomsManager } from 'client/colyseus/rooms-manager';
+import { useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
 import {
     ChatMessage,
     IPowerUp,
@@ -17,6 +18,8 @@ export class GameRoom {
 
     static async join(options: StartGameOptions) {
         await getRoomsManager().joinRoom('game', options);
+
+        useHeaderStore().setConnected(true);
 
         const sendPing = () => {
             this.lastPingSentTimestamp = Date.now();

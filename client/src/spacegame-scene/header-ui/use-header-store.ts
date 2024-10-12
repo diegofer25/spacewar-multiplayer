@@ -12,6 +12,7 @@ const state = reactive({
     isSoundEnabled: localStorage.getItem('isSoundEnabled') !== 'false',
     isMusicEnabled: localStorage.getItem('isMusicEnabled') !== 'false',
     isTyping: false,
+    isConnected: false,
 });
 
 export function useHeaderStore(onMusicChange?: (isMusicEnabled: boolean) => void) {
@@ -28,6 +29,7 @@ export function useHeaderStore(onMusicChange?: (isMusicEnabled: boolean) => void
         updateLatency,
         render,
         setIsTyping,
+        setConnected,
     };
 
     function setSoundEnabled(isSoundEnabled: boolean) {
@@ -58,6 +60,10 @@ export function useHeaderStore(onMusicChange?: (isMusicEnabled: boolean) => void
 
     function setIsTyping(isTyping: boolean) {
         state.isTyping = isTyping;
+    }
+
+    function setConnected(isConnected: boolean) {
+        state.isConnected = isConnected;
     }
 }
 

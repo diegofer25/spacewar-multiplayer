@@ -1,5 +1,5 @@
 <template>
-    <div class="game-header">
+    <div class="game-header" v-if="state.isConnected">
         <GameOptions />
         <div class="game-header__ranking">
             <GameRankingTable />
