@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import background from 'client/assets/images/background.png';
 import bgMusic from 'client/assets/audios/bg-music.mp3';
 import { GameObjectLifeCycle } from 'client/spacegame-scene/spacegame.scene';
+import { useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
 
 export class Background extends Phaser.GameObjects.TileSprite implements GameObjectLifeCycle {
     private lights: Phaser.GameObjects.Light[] = [];
@@ -66,7 +67,14 @@ export class Background extends Phaser.GameObjects.TileSprite implements GameObj
         });
 
         // Add the background music in infinite loop
-        scene.sound.add('bg-music', { loop: true, volume: 0.5 }).play();
+        const musicPlayer = scene.sound.add('bg-music', { loop: true, volume: 0.5 });
+        useHeaderStore(isMusicEnabled => {
+            if (isMusicEnabled) {
+                musicPlayer.play();
+            } else {
+                musicPlayer.stop();
+            }
+        });
 
         // create lights that will randomly change color and walk around the map
         this.lights = Array.from({ length: 50 }, () =>

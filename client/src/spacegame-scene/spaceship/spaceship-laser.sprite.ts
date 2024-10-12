@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import laserShot from 'client/assets/audios/laser-shot.mp3';
 import basicLaserSprite from 'client/assets/images/basic-laser-sprite.png';
 import { SpaceGameScene } from 'client/spacegame-scene/spacegame.scene';
+import { useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
 
 export class SpaceshipLaser extends Phaser.Physics.Arcade.Sprite {
     private _particleEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
@@ -48,7 +49,9 @@ export class SpaceshipLaser extends Phaser.Physics.Arcade.Sprite {
         this.setPosition(laserX, laserY);
         this.setRotation(rotation);
         scene.physics.velocityFromRotation(rotation, 1200, this.body?.velocity);
-        scene.sound.play('laser-shot', { volume: 0.2 });
+        if (useHeaderStore().state.value.isSoundEnabled) {
+            scene.sound.play('laser-shot', { volume: 0.2 });
+        }
 
         // destroy laser after some time
         this.scene.time.delayedCall(this._LIFE_SPAN, this.destroyLaser, undefined, this);

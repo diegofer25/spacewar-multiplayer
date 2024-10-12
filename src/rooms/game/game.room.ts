@@ -11,6 +11,7 @@ import { ISpaceship, Spaceship } from './schemas/spaceship.schema';
 export class Game extends Room<GameState> {
     maxClients = 100;
     private _powerUpCreationDelay = 0;
+    private stateUpdatesCount = 0;
 
     onCreate() {
         this.setState(new GameState());
@@ -21,6 +22,7 @@ export class Game extends Room<GameState> {
         });
 
         this.onMessage('state-update', (client: Client, data: StateUpdateEvent) => {
+            this.stateUpdatesCount++;
             this.onSpaceshipStateUpdate(client, data.spaceship);
             this.onLaserStateUpdate(client, data.lasers);
         });
@@ -38,7 +40,16 @@ export class Game extends Room<GameState> {
             }
         });
 
+        this.onMessage('chat-message', (_client: Client, message: ChatMessage) => {
+            this.broadcast('chat-message', message);
+        });
+
         this.setSimulationInterval(dt => this.runUpdates(dt));
+
+        setInterval(() => {
+            console.log(`Receiving ${this.stateUpdatesCount} state updates per second`);
+            this.stateUpdatesCount = 0;
+        }, 1000);
     }
 
     onJoin(client: Client, options: StartGameOptions) {
@@ -264,7 +275,7 @@ export class Game extends Room<GameState> {
     private processDestroySpaceship(spaceship: ISpaceship, enemySpaceship: ISpaceship) {
         spaceship.isExploding = true;
         spaceship.reviveTimestamp = Date.now() + configs.spaceship.reviveSpawnTime;
-        spaceship.score -= 1;
+        spaceship.score = Math.max(0, spaceship.score - 1);
         spaceship.powerUp = -1;
         spaceship.fireRate = configs.spaceship.initialFireRate;
         spaceship.maxVelocity = configs.spaceship.initialMaxVelocity;
@@ -368,4 +379,10 @@ export interface LaserUpdate {
 export interface StateUpdateEvent {
     spaceship: SpaceshipStateToUpdate;
     lasers: LaserUpdate[];
+}
+
+export interface ChatMessage {
+    userId: string;
+    message: string;
+    username: string;
 }

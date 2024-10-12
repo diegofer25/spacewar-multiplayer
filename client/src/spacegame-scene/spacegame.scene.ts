@@ -6,16 +6,15 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { Background } from 'client/spacegame-scene/background.tilesprite';
 import { PowerUpSprite } from 'client/spacegame-scene/power-up.sprite';
-import { RankingDomElement } from 'client/spacegame-scene/ranking.dom';
 import { SpaceshipSprite } from 'client/spacegame-scene/spaceship/spaceship.sprite';
 import logoImage from 'client/assets/images/logo.png';
 
 import configs from 'shared-configs';
 import { GameRoom } from 'client/colyseus/game-room';
+import { RankingItem, useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
 
 export class SpaceGameScene extends Phaser.Scene {
     private _objects: Map<string, GameObjectLifeCycle> = new Map();
-    private _ranking?: RankingDomElement;
     private _isMobile = window.innerWidth < 800;
     private _zoom = this._isMobile ? 0.75 : 1;
     private _logo?: Phaser.GameObjects.Image;
@@ -50,7 +49,7 @@ export class SpaceGameScene extends Phaser.Scene {
         // move camera to the center of the map
         // this.cameras.main.setScroll(configs.global.mapSize / 2, configs.global.mapSize / 2);
 
-        this._ranking = new RankingDomElement(this);
+        useHeaderStore().render();
         const options = this.getGameRoomOptions();
         await this.startListenServerMessages(options);
 
@@ -72,6 +71,8 @@ export class SpaceGameScene extends Phaser.Scene {
     private async startListenServerMessages(options: StartGameOptions) {
         let resolved = false;
         await GameRoom.join(options);
+
+        useHeaderStore().setOptions(options);
 
         return new Promise(resolve => {
             GameRoom.listenStateUpdate(state => {
@@ -177,16 +178,12 @@ export class SpaceGameScene extends Phaser.Scene {
     }
 
     private renderRank(spaceships: MapSchema<Spaceship, string>, latency: number) {
-        if (!this._ranking) {
-            throw new Error('Ranking DOM element not found');
-        }
+        const ranking: RankingItem[] = Array.from(spaceships.entries())
+            .map(([userId, { username, score }]) => ({ username, score, userId }))
+            .sort((a, b) => b.score - a.score);
 
-        const ranking = Array.from(spaceships.values())
-            .map(({ username, score }) => ({ username, score }))
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 3);
-
-        this._ranking.updateRanking(ranking, latency);
+        useHeaderStore().updateRanking(ranking);
+        useHeaderStore().updateLatency(latency);
     }
 
     private renderMenu(options: StartGameOptions) {
@@ -208,7 +205,7 @@ export class SpaceGameScene extends Phaser.Scene {
             .text(this.cameras.main.centerX, this.cameras.main.centerY + 200, 'START GAME', {
                 fontSize: '32px',
                 color: '#fff',
-                fontFamily: 'Arial',
+                fontFamily: '"Orbitron", sans-serif',
                 fontStyle: 'bold',
             })
             .setOrigin(0.5);

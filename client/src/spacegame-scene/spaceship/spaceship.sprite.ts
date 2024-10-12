@@ -14,6 +14,7 @@ import { SpaceshipParticles } from 'client/spacegame-scene/spaceship/spaceship-p
 import configs from 'shared-configs';
 import { ISpaceship } from 'server/rooms/game/schemas/spaceship.schema';
 import { GameRoom } from 'client/colyseus/game-room';
+import { useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
 
 export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements GameObjectLifeCycle {
     private _spaceshipControls?: SpaceshipControls;
@@ -148,7 +149,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
                     x: 5,
                     y: 5,
                 },
-                fontFamily: 'Arial',
+                fontFamily: '"Orbitron", sans-serif',
             });
             this._usernameText.setOrigin(0.5, 0.5);
         } else {
@@ -218,7 +219,12 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
                 : this._maxVelocity,
             this.spaceshipBody.acceleration,
         );
-        if (!this._turbineSound.isPlaying && this._isPlayer) {
+
+        if (
+            !this._turbineSound.isPlaying &&
+            this._isPlayer &&
+            useHeaderStore().state.value.isSoundEnabled
+        ) {
             this._turbineSound.play();
         }
     }
@@ -286,7 +292,9 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         }
         this._turbineSound.stop();
         this._spaceshipParticles.resetAndExplode();
-        this.scene.sound.play('explosion', { volume: 0.1 });
+        if (useHeaderStore().state.value.isSoundEnabled) {
+            this.scene.sound.play('explosion', { volume: 0.1 });
+        }
         this.setVisible(false);
         if (this.isPlayer) {
             this.scene.cameras.main.fadeOut(500, 0, 0, 0);

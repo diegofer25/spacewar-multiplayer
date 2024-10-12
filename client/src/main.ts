@@ -1,3 +1,4 @@
+import 'client/global-style.scss';
 import { SpaceGameScene } from 'client/spacegame-scene/spacegame.scene';
 import Phaser from 'phaser';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin';

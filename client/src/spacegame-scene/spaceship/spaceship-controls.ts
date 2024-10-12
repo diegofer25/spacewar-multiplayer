@@ -4,6 +4,7 @@ import VirtualJoyStickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-p
 
 import { ShootButtonImage } from 'client/spacegame-scene/shoot-button.image';
 import { SpaceshipSprite } from 'client/spacegame-scene/spaceship/spaceship.sprite';
+import { useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
 
 export class SpaceshipControls {
     private _shootButton?: ShootButtonImage;
@@ -21,7 +22,16 @@ export class SpaceshipControls {
         private spaceship: SpaceshipSprite,
     ) {
         if (scene.input.keyboard && window.innerWidth > 800) {
-            this._cursors = scene.input.keyboard.createCursorKeys();
+            this._cursors = scene.input.keyboard.addKeys(
+                {
+                    up: Phaser.Input.Keyboard.KeyCodes.UP,
+                    down: Phaser.Input.Keyboard.KeyCodes.DOWN,
+                    left: Phaser.Input.Keyboard.KeyCodes.LEFT,
+                    right: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+                    space: Phaser.Input.Keyboard.KeyCodes.SPACE,
+                },
+                false,
+            ) as Phaser.Types.Input.Keyboard.CursorKeys;
             this._wasdKeys = scene.input.keyboard.addKeys({
                 w: Phaser.Input.Keyboard.KeyCodes.W,
                 a: Phaser.Input.Keyboard.KeyCodes.A,
@@ -56,14 +66,14 @@ export class SpaceshipControls {
     }
 
     public get isShooting() {
-        if (!this.spaceship.active) {
+        if (!this.spaceship.active || useHeaderStore().state.value.isTyping) {
             return false;
         }
         return !!(this._cursors?.space.isDown || this._isClicking || this._shootButton?.isShooting);
     }
 
     public get isAccelerating() {
-        if (!this.spaceship.active) {
+        if (!this.spaceship.active || useHeaderStore().state.value.isTyping) {
             return false;
         }
         return !!(
@@ -73,7 +83,7 @@ export class SpaceshipControls {
     }
 
     public get isTurningLeft() {
-        if (!this.spaceship.active) {
+        if (!this.spaceship.active || useHeaderStore().state.value.isTyping) {
             return false;
         }
         return !!(
@@ -83,7 +93,7 @@ export class SpaceshipControls {
     }
 
     public get isTurningRight() {
-        if (!this.spaceship.active) {
+        if (!this.spaceship.active || useHeaderStore().state.value.isTyping) {
             return false;
         }
         return !!(

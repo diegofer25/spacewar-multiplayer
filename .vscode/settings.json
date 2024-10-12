@@ -11,8 +11,10 @@
     "cSpell.words": [
         "anims",
         "colyseus",
+        "Emmiter",
         "lerp",
         "loadtest",
+        "Orbitron",
         "Parens",
         "spacegame",
         "spacewar",
@@ -21,6 +23,7 @@
         "tfjs",
         "Tilemaps",
         "tilesprite",
+        "tweens",
         "virtualjoystick",
         "wasd"
     ]

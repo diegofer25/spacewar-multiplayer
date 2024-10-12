@@ -13,6 +13,10 @@ export default config({
          * Define your room handlers:
          */
         gameServer.define('game', Game);
+
+        if (process.env.NODE_ENV === 'development') {
+            gameServer.simulateLatency(50);
+        }
     },
 
     initializeExpress: app => {
