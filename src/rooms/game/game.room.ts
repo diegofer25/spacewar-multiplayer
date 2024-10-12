@@ -1,6 +1,10 @@
 import { Room, Client } from '@colyseus/core';
 import { v4 as uuidV4 } from 'uuid';
 
+import { GameState } from '@src/rooms/game/schemas/game-state.schema';
+import { PowerUp } from '@src/rooms/game/schemas/power-up.schema';
+import { SpaceshipLaser } from '@src/rooms/game/schemas/spaceship-laser';
+import { Spaceship } from '@src/rooms/game/schemas/spaceship.schema';
 import configs from 'shared-configs';
 import {
     ChatMessage,
@@ -12,10 +16,6 @@ import {
     StartGameOptions,
     StateUpdateEvent,
 } from 'sharedTypes';
-import { GameState } from 'src/rooms/game/schemas/game-state.schema';
-import { PowerUp } from 'src/rooms/game/schemas/power-up.schema';
-import { SpaceshipLaser } from 'src/rooms/game/schemas/spaceship-laser';
-import { Spaceship } from 'src/rooms/game/schemas/spaceship.schema';
 
 export class Game extends Room<GameState> {
     maxClients = 100;

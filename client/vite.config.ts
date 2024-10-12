@@ -13,7 +13,7 @@ export default defineConfig({
     resolve: {
         alias: {
             client: path.resolve(__dirname, 'src'),
-            server: path.resolve(__dirname, '../src'),
+            sharedTypes: path.resolve(__dirname, '../types/index.ts'),
             'shared-configs': path.resolve(__dirname, '../shared-configs.json'),
         },
     },

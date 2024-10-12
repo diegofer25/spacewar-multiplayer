@@ -16,9 +16,9 @@
         "esModuleInterop": true,
         "baseUrl": ".",
         "paths": {
-            "src/*": ["src/*"],
+            "@src/*": ["src/*"],
             "sharedTypes": ["types/index.ts"],
-            "shared-configs": ["./shared-configs.json"]
+            "shared-configs": ["shared-configs.json"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.d.ts", "./../types/index.ts"]
