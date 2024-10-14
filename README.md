@@ -16,6 +16,7 @@
 
 -   Node.js (v20.x or higher)
 -   npm or yarn
+-   Docker compose and Docker(optional)
 
 ### Installation
 
@@ -50,6 +51,10 @@
 -   Open your browser and go to `http://localhost:2567` to play the game.
 
 ## Development
+
+### Docker Compose
+
+You can also run the server using Docker Compose. This will start the server and client, providing better experience.
 
 ### Server
 
