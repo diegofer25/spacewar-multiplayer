@@ -22,10 +22,14 @@ export default config({
     initializeExpress: app => {
         app.get('/', (_req, res) => res.send('SpaceWar Game Server is running!'));
 
+        const user = process.env.NODE_ENV === 'development' ? 'admin' : process.env.ADMIN_USER;
+        const password =
+            process.env.NODE_ENV === 'development' ? 'admin' : process.env.ADMIN_PASSWORD;
+
         const basicAuthMiddleware = basicAuth({
             // list of users and passwords
             users: {
-                [process.env.MONITOR_USER]: process.env.MONITOR_PASSWORD,
+                [user]: password,
             },
             // sends WWW-Authenticate header, which will prompt the user to fill
             // credentials in
