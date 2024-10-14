@@ -29,7 +29,7 @@
 2. Install dependencies for both the server and client:
 
     ```bash
-    npm install
+    npm install . && npm install ./client/
     ```
 
 3. Start the server:
@@ -41,6 +41,7 @@
 4. Start the client:
 
     ```bash
+    cd client/
     npm run dev
     ```
 
