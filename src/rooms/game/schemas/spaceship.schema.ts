@@ -19,18 +19,22 @@ export class Spaceship extends Schema implements ISpaceship {
     @type('number') x: number;
     @type('number') y: number;
     @type('number') powerUp = -1;
-    @type('string') sessionId: string;
+    @type('string') userId: string;
     @type('string') username: string;
     @type('number') nextFireTimestamp = 0;
     @type('number') powerUpExpiryTimestamp = 0;
     @type('number') fireRate = configs.spaceship.initialFireRate;
     @type('number') reviveTimestamp: number;
+    @type('boolean') isBot: boolean;
+    @type('string') sessionId: string;
 
-    constructor(sessionId: string, username: string) {
+    constructor(id: string, username: string, sessionId: string, isBot = false) {
         super();
-        this.sessionId = sessionId;
+        this.userId = id;
         this.username = username;
         this.x = Math.random() * configs.global.mapSize;
         this.y = Math.random() * configs.global.mapSize;
+        this.isBot = isBot;
+        this.sessionId = sessionId;
     }
 }

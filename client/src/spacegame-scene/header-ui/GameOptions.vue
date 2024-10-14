@@ -3,13 +3,13 @@
         <GameIcon
             :icon="icon"
             :size="35"
-            @click="toggleMenu"
+            @click="onIconClick"
             class="menu-container__icon"
-            :class="isMenuOpen && '-is-open'"
+            :class="{ '-is-open': state.isMenuOpen, '-new-message': hasNewMessage }"
         />
         <Transition name="slide">
-            <div v-if="isMenuOpen" class="menu-container__menu">
-                <GameChat />
+            <div v-show="state.isMenuOpen" class="menu-container__menu">
+                <GameChat @new-message="onNewMessage" />
                 <div class="menu-container__options">
                     <GameToggle v-model="isSoundEnabled" label="Sound" />
                     <GameToggle v-model="isMusicEnabled" label="Music" />
@@ -29,8 +29,8 @@ import GameToggle from 'client/spacegame-scene/header-ui/GameToggle.vue';
 import { useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-store';
 import { computed, ref } from 'vue';
 
-const { state, setMusicEnabled, setSoundEnabled } = useHeaderStore();
-const isMenuOpen = ref(false);
+const { state, setMusicEnabled, setSoundEnabled, toggleMenu } = useHeaderStore();
+const hasNewMessage = ref(false);
 const isSoundEnabled = computed({
     get: () => state.value.isSoundEnabled,
     set: value => setSoundEnabled(value),
@@ -39,10 +39,21 @@ const isMusicEnabled = computed({
     get: () => state.value.isMusicEnabled,
     set: value => setMusicEnabled(value),
 });
-const icon = computed(() => (isMenuOpen.value ? 'close' : 'menu'));
+const icon = computed(() => (state.value.isMenuOpen ? 'close' : 'menu'));
 
-function toggleMenu() {
-    isMenuOpen.value = !isMenuOpen.value;
+function onIconClick() {
+    toggleMenu();
+
+    if (state.value.isMenuOpen) {
+        hasNewMessage.value = false;
+    }
+}
+
+function onNewMessage() {
+    console.log('new message');
+    if (!state.value.isMenuOpen) {
+        hasNewMessage.value = true;
+    }
 }
 </script>
 
@@ -82,6 +93,11 @@ function toggleMenu() {
         &.-is-open {
             left: calc(min(calc(100vw - 50px), 400px) + 20px);
         }
+
+        &.-new-message {
+            background-color: red;
+            animation: pulse 1s infinite;
+        }
     }
 }
 
@@ -108,6 +124,18 @@ function toggleMenu() {
     }
     to {
         left: -100%;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
     }
 }
 </style>

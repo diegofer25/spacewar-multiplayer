@@ -1,5 +1,5 @@
 <template>
-    <table style="border-collapse: collapse" @click="test">
+    <table style="border-collapse: collapse">
         <thead>
             <tr>
                 <th>#</th>
@@ -8,8 +8,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(player, index) in ranking" :key="player.userId">
-                <td>{{ index + 1 }}</td>
+            <tr v-for="player in ranking" :key="player.userId">
+                <td>{{ player.position }}</td>
                 <td>{{ player.username }}</td>
                 <td>{{ player.score }}</td>
             </tr>
@@ -39,14 +39,17 @@ const ranking = computed(() => {
 });
 
 function addPosition(player: RankingItem, index: number) {
+    const place = index + 1;
+    const isMe = player.userId === state.value.options.userId;
+    const position =
+        place === 4 && isMe
+            ? state.value.ranking.findIndex(entry => entry.userId === state.value.options.userId) +
+              1
+            : place;
     return {
         ...player,
-        position: index + 1,
+        position,
     };
-}
-
-function test() {
-    console.log('test');
 }
 </script>
 

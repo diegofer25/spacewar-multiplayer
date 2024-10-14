@@ -20,6 +20,8 @@ export default config({
     },
 
     initializeExpress: app => {
+        app.get('/', (_req, res) => res.send('SpaceWar Game Server is running!'));
+
         const basicAuthMiddleware = basicAuth({
             // list of users and passwords
             users: {

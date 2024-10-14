@@ -14,12 +14,14 @@ export interface ISpaceship {
     powerUp: number;
     maxVelocity: number;
     angularVelocity: number;
-    sessionId: string;
+    userId: string;
     username: string;
     fireRate: number;
     nextFireTimestamp: number;
     reviveTimestamp: number;
     powerUpExpiryTimestamp: number;
+    isBot: boolean;
+    sessionId: string;
 }
 
 export type SpaceshipStateToUpdate = Pick<
@@ -33,4 +35,6 @@ export type SpaceshipStateToUpdate = Pick<
     | 'speedY'
     | 'speedX'
     | 'rotation'
+    | 'isBot'
+    | 'userId'
 >;

@@ -14,7 +14,8 @@ export class GameRoom {
     static lastPingSentTimestamp = Date.now();
     static latency = 0;
     static shouldSendUpdate = true;
-    static lastUpdateMessageSentTimestamp = Date.now();
+    static lastPlayerUpdateMessageSentTimestamp = Date.now();
+    static lastBotUpdateMessageSentTimestamp = Date.now();
 
     static async join(options: StartGameOptions) {
         await getRoomsManager().joinRoom('game', options);
@@ -70,11 +71,19 @@ export class GameRoom {
 
     // PUBLISHERS
     static sendStateUpdate(payload: StateUpdateEvent) {
-        if (this.lastUpdateMessageSentTimestamp + 50 > Date.now()) {
+        if (this.lastPlayerUpdateMessageSentTimestamp + 50 > Date.now()) {
             return;
         }
         getRoomsManager().sendMessage('game', 'state-update', payload);
-        this.lastUpdateMessageSentTimestamp = Date.now();
+        this.lastPlayerUpdateMessageSentTimestamp = Date.now();
+    }
+
+    static sendBotStateUpdate(payload: StateUpdateEvent) {
+        if (this.lastBotUpdateMessageSentTimestamp + 50 > Date.now()) {
+            return;
+        }
+        getRoomsManager().sendMessage('game', 'state-update', payload);
+        this.lastBotUpdateMessageSentTimestamp = Date.now();
     }
 
     static sendStartGame(options: StartGameOptions) {

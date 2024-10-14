@@ -27,6 +27,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     private _maxVelocity = 200;
     private _angularVelocity = 75;
     private _currentPowerUp = -1;
+    private _isBot = false;
 
     static preload(scene: Phaser.Scene) {
         SpaceshipControls.preload(scene);
@@ -39,7 +40,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     }
 
     constructor(
-        _scene: SpaceGameScene,
+        private _scene: SpaceGameScene,
         x: number,
         y: number,
         rotation: number,
@@ -48,11 +49,13 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
         id: string,
         private username: string,
         isPlayer: boolean = false,
+        isBot: boolean = false,
     ) {
         super(_scene, x, y, 'spaceship');
 
         this.name = id;
         this._isPlayer = isPlayer;
+        this._isBot = isBot;
         this._turbineSound = _scene.sound.add('turbine', { loop: true, volume: 0.05 });
 
         // Add spaceship to scene
@@ -107,35 +110,19 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     }
 
     public runUpdates() {
-        if (this._isPlayer) {
-            const stateToUpdate: SpaceshipStateToUpdate = {
-                isShooting: !!this._spaceshipControls?.isShooting,
-                isTurningLeft: !!this._spaceshipControls?.isTurningLeft,
-                isTurningRight: !!this._spaceshipControls?.isTurningRight,
-                isAccelerating: !!this._spaceshipControls?.isAccelerating,
-                x: this.x,
-                y: this.y,
-                speedY: this.spaceshipBody.velocity.y,
-                speedX: this.spaceshipBody.velocity.x,
-                rotation: this.rotation,
-            };
-
-            const lasersUpdate = Array.from(this._laserGun.lasers.entries()).map(
-                ([key, laser]) => ({
-                    key,
-                    x: laser.x,
-                    y: laser.y,
-                }),
-            );
-
-            GameRoom.sendStateUpdate({
-                spaceship: stateToUpdate,
-                lasers: lasersUpdate,
-            });
-        }
-
         if (this._isExploding) {
             return;
+        }
+
+        if (this._isPlayer) {
+            this.processPlayerUpdate();
+        } else if (this._isBot) {
+            const playerId = this.name.replace('Bot-', '');
+            const player = this._scene.getSpaceshipById(playerId);
+
+            if (player && player.isPlayer) {
+                this.processBotUpdate();
+            }
         }
 
         // print username in the top of the spaceship
@@ -159,6 +146,9 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
     public updateState(spaceship: ISpaceship) {
         if (spaceship.isExploding) {
             this.destroySpaceship();
+            // this.setPosition(spaceship.x, spaceship.y);
+            // this.setRotation(spaceship.rotation);
+            // this.setAcceleration(0);
             return;
         } else if (this._isExploding && !spaceship.isExploding) {
             this.revive(spaceship.x, spaceship.y);
@@ -195,6 +185,7 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
             Math.abs(this.y - spaceship.y) > configs.spaceship.frameHeight / 2
         ) {
             this.setPosition(spaceship.x, spaceship.y);
+            // this.setVelocity(spaceship.speedX, spaceship.speedY);
         }
         if (Math.abs(this.rotation - spaceship.rotation) > Math.PI / 1.5) {
             this.setRotation(spaceship.rotation);
@@ -311,6 +302,61 @@ export class SpaceshipSprite extends Phaser.Physics.Arcade.Sprite implements Gam
                     this.scene.cameras.main.fadeIn(500, 0, 0, 0);
                 }
             }
+        });
+    }
+
+    private processPlayerUpdate() {
+        const stateToUpdate: SpaceshipStateToUpdate = {
+            isShooting: !!this._spaceshipControls?.isShooting,
+            isTurningLeft: !!this._spaceshipControls?.isTurningLeft,
+            isTurningRight: !!this._spaceshipControls?.isTurningRight,
+            isAccelerating: !!this._spaceshipControls?.isAccelerating,
+            x: this.x,
+            y: this.y,
+            speedY: this.spaceshipBody.velocity.y,
+            speedX: this.spaceshipBody.velocity.x,
+            rotation: this.rotation,
+            isBot: this._isBot,
+            userId: this.name,
+        };
+
+        const lasersUpdate = Array.from(this._laserGun.lasers.entries()).map(([key, laser]) => ({
+            key,
+            x: laser.x,
+            y: laser.y,
+        }));
+
+        GameRoom.sendStateUpdate({
+            spaceship: stateToUpdate,
+            lasers: lasersUpdate,
+        });
+    }
+
+    private processBotUpdate() {
+        const isTurningLeft = Math.random() > 0.5;
+        const stateToUpdate: SpaceshipStateToUpdate = {
+            isShooting: true,
+            isTurningLeft,
+            isTurningRight: !isTurningLeft,
+            isAccelerating: Math.random() > 0.5,
+            x: this.x,
+            y: this.y,
+            speedY: this.spaceshipBody.velocity.y,
+            speedX: this.spaceshipBody.velocity.x,
+            rotation: this.rotation,
+            isBot: this._isBot,
+            userId: this.name,
+        };
+
+        const lasersUpdate = Array.from(this._laserGun.lasers.entries()).map(([key, laser]) => ({
+            key,
+            x: laser.x,
+            y: laser.y,
+        }));
+
+        GameRoom.sendBotStateUpdate({
+            spaceship: stateToUpdate,
+            lasers: lasersUpdate,
         });
     }
 }

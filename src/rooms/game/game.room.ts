@@ -5,6 +5,7 @@ import { GameState } from '@src/rooms/game/schemas/game-state.schema';
 import { PowerUp } from '@src/rooms/game/schemas/power-up.schema';
 import { SpaceshipLaser } from '@src/rooms/game/schemas/spaceship-laser';
 import { Spaceship } from '@src/rooms/game/schemas/spaceship.schema';
+import { getRandomBotName, getRandomTrashTalkMessage } from '@src/rooms/game/utils/bots.utils';
 import configs from 'shared-configs';
 import {
     ChatMessage,
@@ -20,7 +21,6 @@ import {
 export class Game extends Room<GameState> {
     maxClients = 100;
     private _powerUpCreationDelay = 0;
-    private stateUpdatesCount = 0;
 
     onCreate() {
         this.setState(new GameState());
@@ -30,35 +30,20 @@ export class Game extends Room<GameState> {
             client.send('pong', timeToWaitUntilNextPing);
         });
 
-        this.onMessage('state-update', (client: Client, data: StateUpdateEvent) => {
-            this.stateUpdatesCount++;
-            this.onSpaceshipStateUpdate(client, data.spaceship);
-            this.onLaserStateUpdate(client, data.lasers);
+        this.onMessage('state-update', (_client: Client, data: StateUpdateEvent) => {
+            this.onSpaceshipStateUpdate(data.spaceship);
+            this.onLaserStateUpdate(data.lasers);
         });
 
-        this.onMessage('start-game', (client: Client, options: StartGameOptions) => {
-            const userId = options.userId as string;
-            const spaceship = this.state.spaceships.get(userId);
-
-            if (!spaceship) {
-                const username = options.username || `Guest-${client.sessionId}`;
-                this.state.spaceships.set(
-                    options.userId,
-                    new Spaceship(client.sessionId, username),
-                );
-            }
-        });
+        this.onMessage('start-game', (client: Client, options: StartGameOptions) =>
+            this.startGame(client, options),
+        );
 
         this.onMessage('chat-message', (_client: Client, message: ChatMessage) => {
             this.broadcast('chat-message', message);
         });
 
         this.setSimulationInterval(dt => this.runUpdates(dt));
-
-        setInterval(() => {
-            console.log(`Receiving ${this.stateUpdatesCount} state updates per second`);
-            this.stateUpdatesCount = 0;
-        }, 1000);
     }
 
     onJoin(client: Client, options: StartGameOptions) {
@@ -75,9 +60,14 @@ export class Game extends Room<GameState> {
 
     async onLeave(client: Client, consented: boolean) {
         try {
-            const userId = Array.from(this.state.spaceships.keys()).find(
-                userId => this.state.spaceships.get(userId).sessionId === client.sessionId,
-            );
+            const userId = Array.from(this.state.spaceships.values()).find(
+                spaceship => spaceship.sessionId === client.sessionId,
+            )?.userId;
+
+            if (!userId) {
+                throw new Error('spaceship not found');
+            }
+
             this.state.spaceships.get(userId).connected = false;
 
             if (consented) {
@@ -90,17 +80,21 @@ export class Game extends Room<GameState> {
             // client returned! let's re-activate it.
             this.state.spaceships.get(userId).connected = true;
         } catch {
-            // 20 seconds expired. let's remove the client.
-            const userId = Array.from(this.state.spaceships.keys()).find(
-                userId => this.state.spaceships.get(userId).sessionId === client.sessionId,
-            );
-
             console.log(client.sessionId, 'left!');
+            // 20 seconds expired. let's remove the client.
+            const userId = Array.from(this.state.spaceships.values()).find(
+                spaceship => spaceship.sessionId === client.sessionId,
+            )?.userId;
+
+            if (!userId) {
+                return;
+            }
 
             const hasSpaceship = this.state.spaceships.has(userId);
 
             if (hasSpaceship) {
                 this.state.spaceships.delete(userId);
+                this.state.spaceships.delete(`Bot-${userId}`);
             }
         }
     }
@@ -115,16 +109,12 @@ export class Game extends Room<GameState> {
         this.checkStateAndUpdate();
     }
 
-    private onSpaceshipStateUpdate(client: Client, data: SpaceshipStateToUpdate) {
-        const userId = Array.from(this.state.spaceships.keys()).find(
-            userId => this.state.spaceships.get(userId).sessionId === client.sessionId,
-        );
+    private onSpaceshipStateUpdate(data: SpaceshipStateToUpdate) {
+        const spaceship = this.state.spaceships.get(data.userId);
 
-        if (!userId) {
+        if (!spaceship) {
             return;
         }
-
-        const spaceship = this.state.spaceships.get(userId);
 
         spaceship.isShooting = data.isShooting;
         spaceship.isTurningLeft = data.isTurningLeft;
@@ -137,7 +127,7 @@ export class Game extends Room<GameState> {
         spaceship.rotation = data.rotation;
     }
 
-    private onLaserStateUpdate(_: Client, lasers: LaserUpdate[]) {
+    private onLaserStateUpdate(lasers: LaserUpdate[]) {
         lasers.forEach(laser => {
             const storedLaser = this.state.lasers.get(laser.key);
 
@@ -186,7 +176,7 @@ export class Game extends Room<GameState> {
 
             // check iterations with other spaceships
             this.state.spaceships.forEach((enemySpaceship, enemyUserId) => {
-                if (enemyUserId === userId) {
+                if (enemyUserId === userId || enemySpaceship.isExploding) {
                     return;
                 }
 
@@ -199,7 +189,7 @@ export class Game extends Room<GameState> {
                     }
 
                     if (spaceship.powerUp === configs.powerUp.types.shield) {
-                        this.processDestroySpaceship(enemySpaceship, spaceship);
+                        this.processDestroySpaceship(enemySpaceship, spaceship, 3);
                     }
                 }
             });
@@ -281,7 +271,7 @@ export class Game extends Room<GameState> {
         });
     }
 
-    private processDestroySpaceship(spaceship: ISpaceship, enemySpaceship: ISpaceship) {
+    private processDestroySpaceship(spaceship: ISpaceship, enemySpaceship: ISpaceship, points = 1) {
         spaceship.isExploding = true;
         spaceship.reviveTimestamp = Date.now() + configs.spaceship.reviveSpawnTime;
         spaceship.score = Math.max(0, spaceship.score - 1);
@@ -289,7 +279,16 @@ export class Game extends Room<GameState> {
         spaceship.fireRate = configs.spaceship.initialFireRate;
         spaceship.maxVelocity = configs.spaceship.initialMaxVelocity;
         spaceship.angularVelocity = configs.spaceship.initialAngularVelocity;
-        enemySpaceship.score += 1;
+        enemySpaceship.score += points;
+
+        if (enemySpaceship.isBot) {
+            // add trash talk message
+            this.broadcast('chat-message', {
+                message: getRandomTrashTalkMessage(),
+                userId: enemySpaceship.userId,
+                username: enemySpaceship.username,
+            });
+        }
     }
 
     private spaceshipCollectedPowerUp(spaceship: ISpaceship, powerUp: IPowerUp) {
@@ -348,6 +347,36 @@ export class Game extends Room<GameState> {
             Math.abs(rect1.x - rect2.x) * 2 < rect1.width + rect2.width &&
             Math.abs(rect1.y - rect2.y) * 2 < rect1.height + rect2.height
         );
+    }
+
+    private startGame(client: Client, options: StartGameOptions) {
+        const userId = options.userId as string;
+        const spaceship = this.state.spaceships.get(userId);
+
+        if (!spaceship) {
+            const username = options.username || `Guest-${client.sessionId}`;
+            this.state.spaceships.set(
+                options.userId,
+                new Spaceship(options.userId, username, client.sessionId),
+            );
+
+            const botNames = Array.from(this.state.spaceships)
+                .filter(([_key, spaceship]) => {
+                    return spaceship.isBot;
+                })
+                .map(([_key, spaceship]) => spaceship.username.split('-')[0].toLowerCase());
+
+            const botUsername = `Bot-${options.userId}`;
+            this.state.spaceships.set(
+                botUsername,
+                new Spaceship(
+                    botUsername,
+                    getRandomBotName(botNames),
+                    `Bot-${client.sessionId}`,
+                    true,
+                ),
+            );
+        }
     }
 }
 

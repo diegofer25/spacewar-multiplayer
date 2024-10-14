@@ -3,7 +3,7 @@ import { Client } from 'colyseus.js';
 
 import { GameState } from '../src/rooms/game/schemas/game-state.schema';
 
-import { SpaceshipStateToUpdate } from './../src/rooms/game/game.room';
+import { SpaceshipStateToUpdate } from './../types/index';
 
 function requestAnimationFrame(callback) {
     const fps = 60; // Frames per second
@@ -27,26 +27,17 @@ export async function main(options: Options) {
             isTurningLeft: Math.random() > 0.5,
             isTurningRight: Math.random() > 0.5,
             isAccelerating: Math.random() > 0.5,
+            userId: userId,
+            isBot: false,
+            rotation: Math.random() * Math.PI * 2,
+            speedX: Math.random() * 10 - 5,
+            speedY: Math.random() * 10 - 5,
+            x: Math.random() * 800,
+            y: Math.random() * 600,
         } as SpaceshipStateToUpdate);
 
         requestAnimationFrame(eventLoop);
     }
-
-    room.onMessage('power-up-destroyed', message => {
-        console.log('power-up-destroyed', message);
-    });
-
-    room.onMessage('spaceship-destroyed', message => {
-        console.log('spaceship-destroyed', message);
-    });
-
-    room.onMessage('spaceship-respawn', message => {
-        console.log('spaceship-respawn', message);
-    });
-
-    room.onMessage('power-up-consumed', message => {
-        console.log('power-up-consumed', message);
-    });
 
     room.onLeave(code => {
         console.log('left', code);

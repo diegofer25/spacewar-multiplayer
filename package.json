@@ -9,7 +9,7 @@
     },
     "scripts": {
         "start": "node build/src/index.js",
-        "dev-server": "tsx src/index.ts --watch --onSuccess 'tsc -p tsconfig.json'",
+        "dev-server": "tsx src/index.dev.ts --watch --onSuccess 'tsc -p tsconfig.json'",
         "build": "rimraf build && tsc",
         "loadtest": "tsx loadtest/example.ts --room game --numClients 4",
         "lint": "eslint 'src/**/*.{js,ts}' --fix",
@@ -18,9 +18,9 @@
     "author": "Diego Lamarão - diego.lamarao92@gmail.com",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/colyseus/create-colyseus/issues"
+        "url": "https://github.com/diegofer25/spacewar-multiplayer/issues"
     },
-    "homepage": "https://github.com/colyseus/create-colyseus#readme",
+    "homepage": "https://github.com/diegofer25/spacewar-multiplayer",
     "devDependencies": {
         "@colyseus/loadtest": "^0.15.0",
         "@colyseus/testing": "^0.15.0",

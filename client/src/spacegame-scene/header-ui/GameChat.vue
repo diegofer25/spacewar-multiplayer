@@ -5,7 +5,10 @@
                 class="chat__message"
                 v-for="item in messages"
                 :key="item.userId"
-                :class="checkIfItsMe(item.userId) && '-is-me'"
+                :class="{
+                    '-is-me': checkIfItsMe(item.userId),
+                    '-is-system': item.userId === 'system',
+                }"
             >
                 <strong>{{ item.username }}:</strong> {{ item.message }}
             </div>
@@ -34,8 +37,15 @@ import { useHeaderStore } from 'client/spacegame-scene/header-ui/use-header-stor
 import { ChatMessage } from 'sharedTypes';
 import { ref, onMounted, nextTick } from 'vue';
 
+const emit = defineEmits(['new-message']);
 const { state, setIsTyping } = useHeaderStore();
-const messages = ref<ChatMessage[]>([]);
+const messages = ref<ChatMessage[]>([
+    {
+        userId: 'system',
+        username: 'System',
+        message: 'Press arrow keys or WASD to move, space or mouse click to shoot',
+    },
+]);
 const newMessage = ref('');
 const messageContainer = ref<HTMLElement | null>(null);
 
@@ -44,6 +54,7 @@ onMounted(() => {
     GameRoom.listenChatMessage(message => {
         messages.value.push(message);
         scrollToBottom();
+        emit('new-message');
     });
 });
 
@@ -97,6 +108,10 @@ function checkIfItsMe(id: string) {
         &.-is-me {
             background-color: blue;
             align-self: flex-end;
+        }
+
+        &.-is-system {
+            background-color: purple;
         }
     }
 

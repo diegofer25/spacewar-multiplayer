@@ -32,11 +32,14 @@ export class SpaceshipControls {
                 },
                 false,
             ) as Phaser.Types.Input.Keyboard.CursorKeys;
-            this._wasdKeys = scene.input.keyboard.addKeys({
-                w: Phaser.Input.Keyboard.KeyCodes.W,
-                a: Phaser.Input.Keyboard.KeyCodes.A,
-                d: Phaser.Input.Keyboard.KeyCodes.D,
-            }) as WasdKeys;
+            this._wasdKeys = scene.input.keyboard.addKeys(
+                {
+                    w: Phaser.Input.Keyboard.KeyCodes.W,
+                    a: Phaser.Input.Keyboard.KeyCodes.A,
+                    d: Phaser.Input.Keyboard.KeyCodes.D,
+                },
+                false,
+            ) as WasdKeys;
 
             scene.input.on(
                 Phaser.Input.Events.POINTER_DOWN,

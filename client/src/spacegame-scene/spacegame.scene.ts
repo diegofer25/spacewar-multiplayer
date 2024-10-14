@@ -56,6 +56,8 @@ export class SpaceGameScene extends Phaser.Scene {
         const playerSpaceship = this._objects.get(options.userId) as SpaceshipSprite;
         if (!playerSpaceship) {
             this.renderMenu(options);
+        } else {
+            window.innerWidth > 800 && useHeaderStore().toggleMenu();
         }
     }
 
@@ -65,6 +67,10 @@ export class SpaceGameScene extends Phaser.Scene {
         if (this._logo) {
             this.children.bringToTop(this._logo);
         }
+    }
+
+    public getSpaceshipById(userId: string) {
+        return this.spaceships.find(spaceship => spaceship.name === userId);
     }
 
     private async startListenServerMessages(options: StartGameOptions) {
@@ -77,7 +83,7 @@ export class SpaceGameScene extends Phaser.Scene {
             GameRoom.listenStateUpdate(state => {
                 this.processSpaceshipStateUpdate(state.spaceships);
 
-                this.renderRank(state.spaceships, GameRoom.latency);
+                this.renderRank(state.spaceships);
 
                 if (resolved) {
                     return;
@@ -99,6 +105,7 @@ export class SpaceGameScene extends Phaser.Scene {
                     userId,
                     spaceship.username,
                     isPlayer,
+                    spaceship.isBot,
                 );
                 newSpaceship.updateState(spaceship);
                 this._objects.set(userId, newSpaceship);
@@ -176,13 +183,13 @@ export class SpaceGameScene extends Phaser.Scene {
         });
     }
 
-    private renderRank(spaceships: MapSchema<ISpaceship, string>, latency: number) {
+    private renderRank(spaceships: MapSchema<ISpaceship, string>) {
         const ranking: RankingItem[] = Array.from(spaceships.entries())
             .map(([userId, { username, score }]) => ({ username, score, userId }))
             .sort((a, b) => b.score - a.score);
 
         useHeaderStore().updateRanking(ranking);
-        useHeaderStore().updateLatency(latency);
+        useHeaderStore().updateLatency(GameRoom.latency);
     }
 
     private renderMenu(options: StartGameOptions) {
@@ -198,6 +205,7 @@ export class SpaceGameScene extends Phaser.Scene {
                 this._particleEmmiter?.stop();
                 this._particleEmmiter?.destroy();
                 this._particleEmmiter = undefined;
+                window.innerWidth > 800 && useHeaderStore().toggleMenu();
             });
         // add start game text below the logo
         this._startGameText = this.add

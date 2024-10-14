@@ -13,6 +13,7 @@ const state = reactive({
     isMusicEnabled: localStorage.getItem('isMusicEnabled') !== 'false',
     isTyping: false,
     isConnected: false,
+    isMenuOpen: false,
 });
 
 export function useHeaderStore(onMusicChange?: (isMusicEnabled: boolean) => void) {
@@ -30,6 +31,7 @@ export function useHeaderStore(onMusicChange?: (isMusicEnabled: boolean) => void
         render,
         setIsTyping,
         setConnected,
+        toggleMenu,
     };
 
     function setSoundEnabled(isSoundEnabled: boolean) {
@@ -64,6 +66,10 @@ export function useHeaderStore(onMusicChange?: (isMusicEnabled: boolean) => void
 
     function setConnected(isConnected: boolean) {
         state.isConnected = isConnected;
+    }
+
+    function toggleMenu() {
+        state.isMenuOpen = !state.isMenuOpen;
     }
 }
 
