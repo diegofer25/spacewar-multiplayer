@@ -16,6 +16,7 @@
 
 -   Node.js (v20.x or higher)
 -   npm or yarn
+-   Docker compose and Docker(optional)
 
 ### Installation
 
@@ -29,7 +30,7 @@
 2. Install dependencies for both the server and client:
 
     ```bash
-    npm install
+    npm install . && npm install ./client/
     ```
 
 3. Start the server:
@@ -41,6 +42,7 @@
 4. Start the client:
 
     ```bash
+    cd client/
     npm run dev
     ```
 
@@ -49,6 +51,10 @@
 -   Open your browser and go to `http://localhost:2567` to play the game.
 
 ## Development
+
+### Docker Compose
+
+You can also run the server using Docker Compose. This will start the server and client, providing better experience.
 
 ### Server
 

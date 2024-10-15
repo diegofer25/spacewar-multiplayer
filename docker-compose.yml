@@ -1,0 +1,25 @@
+services:
+  web-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "2567:2567"
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    volumes:
+    - .:/app
+    command: npm run dev-server
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app/client/
+    ports:
+      - "5173:5173"
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    depends_on:
+    - web-server  
+    command: npm run dev -- --host
